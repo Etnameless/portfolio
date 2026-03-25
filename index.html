@@ -4,303 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#f6f6f6">
-  <title>Xavier TS — Portfolio</title>
+  <title>Xavier TS</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .holding h1 {
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+    .holding p {
+      margin-top: 12px;
+      font-size: 0.875rem;
+      color: var(--stone);
+    }
+  </style>
 </head>
 <body>
-
-  <header class="header">
-    <nav class="nav">
-      <a href="/" class="nav-brand">Xavier TS</a>
-      <div class="nav-links">
-        <a href="#work">Work</a>
-        <a href="#about">About</a>
-      </div>
-    </nav>
-  </header>
-
-  <main>
-    <section class="hero">
-      <h1 class="hero-heading">Visual communication<br>and design.</h1>
-      <p class="hero-sub">Freelance Designer — Sydney, AU</p>
-    </section>
-
-    <section class="feed" id="work">
-
-      <article class="entry">
-        <div class="entry-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="entry-header-left">
-            <h2 class="entry-title">Seersucker</h2>
-            <span class="entry-tags">Branding, Fashion</span>
-          </div>
-          <time>2024</time>
-        </div>
-        <div class="entry-body">
-          <p class="entry-desc">Wordmark, monogram and brand assets for emerging Sydney fashion brand Seersucker. The brand's focus is in delivering long-lasting womenswear using sustainable materials.</p>
-          <div class="entry-images">
-            <img src="images/seersucker-01.jpg" alt="Seersucker — monogram and wordmark" loading="lazy">
-            <img src="images/seersucker-02.jpg" alt="Seersucker — invitation design" loading="lazy">
-            <img src="images/seersucker-03.jpg" alt="Seersucker — monogram tag mockup" loading="lazy">
-            <img src="images/seersucker-04.jpg" alt="Seersucker — ribbon mockup" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="entry">
-        <div class="entry-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="entry-header-left">
-            <h2 class="entry-title">UTS Honours Exhibition</h2>
-            <span class="entry-tags">Identity, Exhibition</span>
-          </div>
-          <time>2023</time>
-        </div>
-        <div class="entry-body">
-          <p class="entry-desc">Identity design for University of Technology Sydney's 2023 honours graduation exhibitions. Designed in collaboration with Samson Ossendryver.</p>
-          <div class="entry-images">
-            <img src="images/uts-01.jpg" alt="UTS Honours Exhibition — installation view" loading="lazy">
-            <img src="images/uts-02.jpg" alt="UTS Honours Exhibition — signage detail" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="entry">
-        <div class="entry-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="entry-header-left">
-            <h2 class="entry-title">AFTRS</h2>
-            <span class="entry-tags">Print, Digital, Education</span>
-          </div>
-          <time>2020 — 2023</time>
-        </div>
-        <div class="entry-body">
-          <p class="entry-desc">Various print and digital promotional and educational work created while designer at the Australian Film Television and Radio School.</p>
-          <div class="entry-images">
-            <img src="images/aftrs-01.jpg" alt="AFTRS — graduation event" loading="lazy">
-            <img src="images/aftrs-02.jpg" alt="AFTRS — brochure design" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="entry">
-        <div class="entry-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="entry-header-left">
-            <h2 class="entry-title">Proscenium</h2>
-            <span class="entry-tags">Digital, Interactive</span>
-          </div>
-          <time>2019</time>
-        </div>
-        <div class="entry-body">
-          <p class="entry-desc">Proscenium explores ideas around dance creation and presents interactive tools to stimulate collaboration in this process.</p>
-          <div class="entry-images">
-            <img src="images/proscenium-01.png" alt="Proscenium — interface" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="entry">
-        <div class="entry-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="entry-header-left">
-            <h2 class="entry-title">No Idea</h2>
-            <span class="entry-tags">Editorial, Fashion</span>
-          </div>
-          <time>2019</time>
-        </div>
-        <div class="entry-body">
-          <p class="entry-desc">Lookbook designed for fashion designer Macka Sutherland to present their utility garment project.</p>
-          <div class="entry-images">
-            <img src="images/noidea-01.jpg" alt="No Idea — lookbook" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="entry">
-        <div class="entry-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="entry-header-left">
-            <h2 class="entry-title">DCW Journal</h2>
-            <span class="entry-tags">Editorial, Research</span>
-          </div>
-          <time>2019</time>
-        </div>
-        <div class="entry-body">
-          <p class="entry-desc">Editorial design for a journal presenting research concerning child welfare and developmental science. The publisher required an approach that felt fresh and easily digestible.</p>
-          <div class="entry-images">
-            <img src="images/dcw-01.jpg" alt="DCW Journal — spread" loading="lazy">
-            <img src="images/dcw-02.jpg" alt="DCW Journal — contents spread" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="entry">
-        <div class="entry-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="entry-header-left">
-            <h2 class="entry-title">Studio Pacific</h2>
-            <span class="entry-tags">Editorial, Architecture</span>
-          </div>
-          <time>2019</time>
-        </div>
-        <div class="entry-body">
-          <p class="entry-desc">A book showcasing a collection of projects completed by Studio Pacific Architecture, their history and what the future might hold for the firm.</p>
-          <div class="entry-images">
-            <img src="images/studiopacific-01.jpg" alt="Studio Pacific — cover" loading="lazy">
-            <img src="images/studiopacific-02.jpg" alt="Studio Pacific — interior spread" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="entry">
-        <div class="entry-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="entry-header-left">
-            <h2 class="entry-title">ClubTalk</h2>
-            <span class="entry-tags">Digital, Campaign</span>
-          </div>
-          <time>2019</time>
-        </div>
-        <div class="entry-body">
-          <p class="entry-desc">An initiative providing information around safe listening practices for loud music experiences. Website and campaign design.</p>
-          <div class="entry-images">
-            <img src="images/clubtalk-01.jpg" alt="ClubTalk — website" loading="lazy">
-            <img src="images/clubtalk-02.jpg" alt="ClubTalk — campaign" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-      <article class="entry">
-        <div class="entry-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="entry-header-left">
-            <h2 class="entry-title">Collective Canvas</h2>
-            <span class="entry-tags">Photography</span>
-          </div>
-          <time>2019</time>
-        </div>
-        <div class="entry-body">
-          <p class="entry-desc">Lookbook photography created for use across the Collective Canvas webstore and social media to promote their summer 2019 sneaker range.</p>
-          <div class="entry-images">
-            <img src="images/collectivecanvas-01.jpg" alt="Collective Canvas — lookbook" loading="lazy">
-          </div>
-        </div>
-      </article>
-
-    </section>
-
-    <section class="about" id="about">
-      <div class="about-content">
-        <p class="about-text">
-          Xavier TS is a visual communication designer based in Sydney, Australia, working across branding, editorial, and digital design.
-        </p>
-        <p class="about-text secondary">
-          Currently available for freelance projects and collaborations.
-        </p>
-      </div>
-
-      <div class="experience">
-        <h2 class="experience-heading">Experience</h2>
-        <div class="experience-list">
-          <div class="experience-item">
-            <span class="experience-role">Freelance Designer</span>
-            <span class="experience-detail">2024 — Present, Sydney AU</span>
-          </div>
-          <div class="experience-item">
-            <span class="experience-role">Designer, AFTRS</span>
-            <span class="experience-detail">2020 — 2023, Sydney AU</span>
-          </div>
-          <div class="experience-item">
-            <span class="experience-role">Design Intern, Strategy Creative</span>
-            <span class="experience-detail">2019, Sydney AU</span>
-          </div>
-          <div class="experience-item">
-            <span class="experience-role">Copywriter & Photographer, Sparks Interactive</span>
-            <span class="experience-detail">2019, Auckland NZ</span>
-          </div>
-        </div>
-
-        <h2 class="experience-heading">Education</h2>
-        <div class="experience-list">
-          <div class="experience-item">
-            <span class="experience-role">Bachelor of Design with Honours — Visual Communication</span>
-            <span class="experience-detail">Massey University, Wellington NZ</span>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h3 class="footer-heading">Contact</h3>
-        <a href="https://www.linkedin.com/" class="footer-link">Get in touch</a>
-      </div>
-      <div class="footer-col">
-        <h3 class="footer-heading">Social</h3>
-        <a href="#" class="footer-link">LinkedIn</a>
-        <a href="#" class="footer-link">Instagram</a>
-      </div>
-      <div class="footer-col">
-        <h3 class="footer-heading">Info</h3>
-        <span class="footer-text">&copy; 2026 Xavier TS</span>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    (function() {
-      const body = document.body;
-      const html = document.documentElement;
-
-      function lerp(a, b, t) {
-        return a + (b - a) * t;
-      }
-
-      // Attempt to set the progress on the CSS custom property
-      // so it transitions through pure CSS. When 't' is < 0.45
-      // text is dark, when > 0.55 it's light; in between it fades.
-      function smoothstep(edge0, edge1, x) {
-        const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-        return t * t * (3 - 2 * t);
-      }
-
-      function toHex(v) {
-        return Math.round(v).toString(16).padStart(2, '0');
-      }
-
-      function update() {
-        const scrollTop = window.scrollY;
-        const docHeight = Math.max(
-          body.scrollHeight, body.offsetHeight,
-          html.scrollHeight, html.offsetHeight
-        ) - window.innerHeight;
-        const progress = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
-
-        // Background: #f6f6f6 (246) → #2a2a2a (42)
-        const bg = Math.round(lerp(246, 42, progress));
-        const bgHex = '#' + toHex(bg).repeat(3);
-
-        // Border
-        const border = Math.round(lerp(224, 60, progress));
-        const borderHex = '#' + toHex(border).repeat(3);
-
-        // Text flip: smoothstep between 35%–45% scroll progress
-        // Before 35% = fully dark text, after 45% = fully light text
-        const flip = smoothstep(0.35, 0.45, progress);
-
-        // --text: #1a1a1a → #f0f0f0
-        const text = Math.round(lerp(26, 240, flip));
-        html.style.setProperty('--text', '#' + toHex(text).repeat(3));
-
-        // --stone: #6b6b6b → #aaaaaa
-        const stone = Math.round(lerp(107, 170, flip));
-        html.style.setProperty('--stone', '#' + toHex(stone).repeat(3));
-
-        // --aluminium: #999 → #b4b4b4
-        const alum = Math.round(lerp(153, 180, flip));
-        html.style.setProperty('--aluminium', '#' + toHex(alum).repeat(3));
-
-        html.style.setProperty('--bg', bgHex);
-        html.style.setProperty('--border', borderHex);
-      }
-
-      window.addEventListener('scroll', update, { passive: true });
-      update();
-    })();
-  </script>
+  <div class="holding">
+    <h1>Xavier TS</h1>
+    <p>Coming soon.</p>
+  </div>
 </body>
 </html>
