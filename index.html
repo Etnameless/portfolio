@@ -40,61 +40,70 @@
   </div>
 
   <script>
-    // ===== Project data (placeholder content for layout pass) =====
-    const projects = [
-      {
-        body: [
-          "Identity development for an alternative medicine telehealth clinic created by Aura theraputics.",
-          "Designed in partnership with Samson Ossendryver Studio.",
-          "Images used in this concept are not owned or produced by Aura theraputics."
-        ]
-      },
-      { body: ["Brand identity and wordmark for an emerging Sydney fashion label.", "Art direction and typographic system."] },
-      { body: ["Exhibition identity and wayfinding for a university honours show.", "Print and environmental graphics."] },
-      { body: ["Editorial design and layout system for an independent print publication.", "Cover to cover art direction."] },
-      { body: ["Visual identity for a hospitality venue.", "Signage, menus and collateral."] },
-      { body: ["Packaging and label design for a small-batch product line.", "Structural and surface design."] },
-      { body: ["Digital product and interface explorations.", "Design system and prototyping."] }
-    ];
+    // ===== Project: one continuous strip of images, shown two at a time =====
+    const project = {
+      info: [
+        "Identity development for an alternative medicine telehealth clinic created by Aura theraputics.",
+        "Designed in partnership with Samson Ossendryver Studio.",
+        "Images used in this concept are not owned or produced by Aura theraputics."
+      ],
+      imageCount: 6   // placeholder boxes for now
+    };
+
+    const PER_VIEW = 2; // boxes displayed at once
 
     const track      = document.getElementById('track');
     const infoBody   = document.getElementById('info-body');
     const pagination = document.getElementById('pagination');
-    let current = 0;
 
-    // Build slides (2 panels each, placeholder mauve)
-    track.innerHTML = projects.map(() =>
+    // Group image indices into fixed pairs: (0,1)(2,3)(4,5)(6)
+    const views = [];
+    for (let i = 0; i < project.imageCount; i += PER_VIEW) {
+      const view = [];
+      for (let k = 0; k < PER_VIEW && i + k < project.imageCount; k++) view.push(i + k);
+      views.push(view);
+    }
+    let current = 0; // current view index
+
+    // Sidebar info (single project, static)
+    infoBody.innerHTML = project.info.map(p => `<p>${p}</p>`).join('');
+
+    // Build slides — one per view (last may hold a single box)
+    track.innerHTML = views.map(view =>
       `<div class="slide">
-         <figure class="panel"></figure>
-         <figure class="panel"></figure>
+         ${view.map(() => '<figure class="panel"></figure>').join('')}
        </div>`
     ).join('');
 
-    // Build pagination numbers
-    pagination.innerHTML = projects.map((_, i) =>
-      `<button class="page-num" data-i="${i}" aria-label="Project ${i + 1}">${i + 1}</button>`
+    // Build pagination numbers — one per image
+    pagination.innerHTML = Array.from({ length: project.imageCount }, (_, i) =>
+      `<button class="page-num" data-img="${i}" aria-label="Image ${i + 1}">${i + 1}</button>`
     ).join('');
     const pages = Array.from(pagination.children);
 
     function render() {
       track.style.transform = `translateX(${-current * 100}%)`;
-      infoBody.innerHTML = projects[current].body.map(p => `<p>${p}</p>`).join('');
-      pages.forEach((b, i) => b.classList.toggle('active', i === current));
+      const visible = views[current];
+      // Highlight the displayed images' numbers (light grey); rest stay black
+      pages.forEach((b, i) => b.classList.toggle('active', visible.includes(i)));
     }
 
-    function go(i) {
-      const n = projects.length;
-      current = ((i % n) + n) % n; // wrap both directions
+    function go(viewIndex) {
+      const n = views.length;
+      current = ((viewIndex % n) + n) % n; // wrap both directions
       render();
     }
 
-    // Click gallery → next project
+    // Click gallery → next pair
     document.getElementById('gallery').addEventListener('click', () => go(current + 1));
 
-    // Click a number → jump to project
+    // Click a number → jump to the pair containing that image
     pagination.addEventListener('click', (e) => {
       const btn = e.target.closest('.page-num');
-      if (btn) go(Number(btn.dataset.i));
+      if (!btn) return;
+      const img = Number(btn.dataset.img);
+      const viewIndex = views.findIndex(v => v.includes(img));
+      if (viewIndex !== -1) go(viewIndex);
     });
 
     // ===== Grid overlay =====
