@@ -8,117 +8,236 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="page">
+  <div class="viewport">
 
-    <!-- ===== Sidebar ===== -->
-    <aside class="sidebar">
-      <header class="brand">Xavier T.S</header>
+    <!-- Scrolling content: project info + gallery per page -->
+    <div class="pages" id="pages">
 
-      <section class="project-info">
-        <p class="info-label">Project</p>
-        <div class="info-body" id="info-body"><!-- filled by JS --></div>
+      <!-- ===================== PAGE / PROJECT 1 ===================== -->
+      <section class="page" data-project="1">
+        <section class="gallery" aria-label="Project images — click to advance">
+          <div class="track"><!-- slides filled by JS --></div>
+        </section>
+        <div class="grid-overlay" aria-hidden="true"><!-- columns filled by JS --></div>
       </section>
-    </aside>
 
-    <!-- ===== Gallery ===== -->
-    <section class="gallery" id="gallery" aria-label="Project images — click to advance">
-      <div class="track" id="track"><!-- slides filled by JS --></div>
-    </section>
+      <!-- ===================== PAGE / PROJECT 2 ===================== -->
+      <section class="page" data-project="2">
+        <section class="gallery" aria-label="Project images — click to advance">
+          <div class="track"><!-- slides filled by JS --></div>
+        </section>
+        <div class="grid-overlay" aria-hidden="true"><!-- columns filled by JS --></div>
+      </section>
 
-    <!-- ===== Footer row ===== -->
-    <nav class="menu">
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="#projects">Projects</a>
-    </nav>
+    </div>
 
-    <div class="pagination" id="pagination"><!-- numbers filled by JS --></div>
-
-    <!-- ===== Grid overlay (toggle with "G") ===== -->
-    <div class="grid-overlay" id="grid-overlay" aria-hidden="true"><!-- columns filled by JS --></div>
+    <!-- Fixed chrome: persists across pages; text + numbers fade on page change -->
+    <div class="chrome">
+      <header class="brand">Xavier T.S</header>
+      <section class="project-info" id="project-info">
+        <p class="info-label"><!-- filled by JS --></p>
+        <div class="info-body"><!-- filled by JS --></div>
+      </section>
+      <nav class="menu">
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="#projects">Projects</a>
+      </nav>
+      <div class="pagination" id="pagination"><!-- numbers filled by JS --></div>
+    </div>
 
   </div>
 
   <script>
-    // ===== Project: one continuous strip of images, shown two at a time =====
-    const project = {
-      info: [
-        "Identity development for an alternative medicine telehealth clinic created by Aura theraputics.",
-        "Designed in partnership with Samson Ossendryver Studio.",
-        "Images used in this concept are not owned or produced by Aura theraputics."
-      ],
-      imageCount: 6   // placeholder boxes for now
-    };
+    (function () {
+      const TRANSITION_MS = 1000;   // matches the CSS image-slide duration
+      const FADE_MS = 1000;         // matches the CSS fade-IN duration
+      const IMAGE_COUNT = 6;
+      // boxes displayed at once — 1 on mobile, 2 on wider screens
+      function getPerView() { return window.matchMedia('(max-width: 720px)').matches ? 1 : 2; }
+      let perView = getPerView();
 
-    const PER_VIEW = 2; // boxes displayed at once
+      // Per-page text (shown in the fixed chrome; fades + swaps on page change)
+      const PROJECTS = [
+        {
+          label: "Project 1",
+          body: [
+            "Identity development for an alternative medicine telehealth clinic created by Aura theraputics.",
+            "Designed in partnership with Samson Ossendryver Studio.",
+            "Images used in this concept are not owned or produced by Aura theraputics."
+          ]
+        },
+        {
+          label: "Project 2",
+          body: [
+            "Identity development for an alternative medicine telehealth clinic created by Aura theraputics.",
+            "Designed in partnership with Samson Ossendryver Studio.",
+            "Images used in this concept are not owned or produced by Aura theraputics."
+          ]
+        }
+      ];
 
-    const track      = document.getElementById('track');
-    const infoBody   = document.getElementById('info-body');
-    const pagination = document.getElementById('pagination');
+      // Group image indices into views of `per` (e.g. pairs (0,1)(2,3)(4,5) or singles)
+      function buildViews(count, per) {
+        const views = [];
+        for (let i = 0; i < count; i += per) {
+          const view = [];
+          for (let k = 0; k < per && i + k < count; k++) view.push(i + k);
+          views.push(view);
+        }
+        return views;
+      }
 
-    // Group image indices into fixed pairs: (0,1)(2,3)(4,5)(6)
-    const views = [];
-    for (let i = 0; i < project.imageCount; i += PER_VIEW) {
-      const view = [];
-      for (let k = 0; k < PER_VIEW && i + k < project.imageCount; k++) view.push(i + k);
-      views.push(view);
-    }
-    let current = 0; // current view index
+      // ---- Per-page gallery (track + overlay). Text + pagination are external. ----
+      function initGallery(page, onChange) {
+        const track    = page.querySelector('.track');
+        const overlay  = page.querySelector('.grid-overlay');
+        let views = [];
+        let current = 0;
+        let firstImage = 0;   // preserved across rebuilds so we stay on the same image
 
-    // Sidebar info (single project, static)
-    infoBody.innerHTML = project.info.map(p => `<p>${p}</p>`).join('');
+        overlay.innerHTML = Array.from({ length: 20 }, () => '<span></span>').join('');
 
-    // Build slides — one per view (last may hold a single box)
-    track.innerHTML = views.map(view =>
-      `<div class="slide">
-         ${view.map(() => '<figure class="panel"></figure>').join('')}
-       </div>`
-    ).join('');
+        function build() {
+          views = buildViews(IMAGE_COUNT, perView);
+          track.innerHTML = views.map(view =>
+            `<div class="slide">${view.map(() => '<figure class="panel"></figure>').join('')}</div>`
+          ).join('');
+          current = views.findIndex(v => v.includes(firstImage));
+          if (current < 0) current = 0;
+          render();
+        }
+        function render() {
+          track.style.transform = `translateX(${-current * 100}%)`;
+          if (onChange) onChange();
+        }
+        function go(viewIndex) {
+          const n = views.length;
+          current = ((viewIndex % n) + n) % n;
+          firstImage = views[current][0];
+          render();
+        }
+        page.querySelector('.gallery').addEventListener('click', () => go(current + 1));
+        build();
 
-    // Build pagination numbers — one per image
-    pagination.innerHTML = Array.from({ length: project.imageCount }, (_, i) =>
-      `<button class="page-num" data-img="${i}" aria-label="Image ${i + 1}">${i + 1}</button>`
-    ).join('');
-    const pages = Array.from(pagination.children);
+        return {
+          go,
+          next: () => go(current + 1),
+          prev: () => go(current - 1),
+          get current() { return current; },
+          get views() { return views; },
+          rebuild: build,
+          toggleOverlay: () => overlay.classList.toggle('visible')
+        };
+      }
 
-    function render() {
-      track.style.transform = `translateX(${-current * 100}%)`;
-      const visible = views[current];
-      // Highlight the displayed images' numbers (light grey); rest stay black
-      pages.forEach((b, i) => b.classList.toggle('active', visible.includes(i)));
-    }
+      const pageEls = Array.from(document.querySelectorAll('.page'));
+      let galleries = [];
+      let section = 0;
+      let animating = false;
 
-    function go(viewIndex) {
-      const n = views.length;
-      current = ((viewIndex % n) + n) % n; // wrap both directions
-      render();
-    }
+      // ---- Shared, fixed project text ----
+      const projectInfo = document.getElementById('project-info');
+      const infoLabel = projectInfo.querySelector('.info-label');
+      const infoBody  = projectInfo.querySelector('.info-body');
+      function renderProjectInfo() {
+        const p = PROJECTS[section];
+        infoLabel.textContent = p.label;
+        infoBody.innerHTML = p.body.map(x => `<p>${x}</p>`).join('');
+      }
 
-    // Click gallery → next pair
-    document.getElementById('gallery').addEventListener('click', () => go(current + 1));
+      // ---- Shared, fixed pagination (controls + reflects the current page) ----
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = Array.from({ length: IMAGE_COUNT }, (_, i) =>
+        `<button class="page-num" data-img="${i}" aria-label="Image ${i + 1}">${i + 1}</button>`
+      ).join('');
+      const numbers = Array.from(pagination.children);
 
-    // Click a number → jump to the pair containing that image
-    pagination.addEventListener('click', (e) => {
-      const btn = e.target.closest('.page-num');
-      if (!btn) return;
-      const img = Number(btn.dataset.img);
-      const viewIndex = views.findIndex(v => v.includes(img));
-      if (viewIndex !== -1) go(viewIndex);
-    });
+      function renderPagination() {
+        const g = galleries[section];
+        if (!g) return;
+        const visible = g.views[g.current];
+        numbers.forEach((b, i) => b.classList.toggle('active', visible.includes(i)));
+      }
 
-    // ===== Grid overlay =====
-    const overlay = document.getElementById('grid-overlay');
-    const COLS = 20;
-    overlay.innerHTML = Array.from({ length: COLS }, () => '<span></span>').join('');
+      pagination.addEventListener('click', (e) => {
+        const btn = e.target.closest('.page-num');
+        if (!btn) return;
+        const img = Number(btn.dataset.img);
+        const g = galleries[section];
+        const vi = g.views.findIndex(v => v.includes(img));
+        if (vi !== -1) g.go(vi);
+      });
 
-    // Arrow keys → horizontal navigation, "G" → toggle grid overlay
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') go(current + 1);
-      if (e.key === 'ArrowLeft')  go(current - 1);
-      if (e.key.toLowerCase() === 'g') overlay.classList.toggle('visible');
-    });
+      galleries = pageEls.map(p => initGallery(p, renderPagination));
+      renderPagination();
+      renderProjectInfo();
 
-    render();
+      // ---- Vertical section scroller ----
+      const pagesWrap = document.getElementById('pages');
+
+      function goSection(target) {
+        target = Math.max(0, Math.min(pageEls.length - 1, target));
+        if (target === section || animating) return;
+        section = target;
+        animating = true;
+
+        // text + numbers fade out immediately; swap content while hidden, then
+        // fade back in ONLY after the image slide has fully completed
+        pagination.classList.add('fade');
+        projectInfo.classList.add('fade');
+        pagesWrap.style.transform = `translateY(${-section * 100}vh)`;
+        setTimeout(() => {
+          renderPagination();
+          renderProjectInfo();
+          pagination.classList.remove('fade');
+          projectInfo.classList.remove('fade');
+        }, TRANSITION_MS);
+        // keep locked through the fade-in so a quick scroll can't interrupt it
+        setTimeout(() => { animating = false; }, TRANSITION_MS + FADE_MS);
+      }
+
+      // Wheel → move one section (locked during the transition)
+      window.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (animating || Math.abs(e.deltaY) < 8) return;
+        goSection(section + (e.deltaY > 0 ? 1 : -1));
+      }, { passive: false });
+
+      // Keys: ←/→ navigate images on the current page; ↑/↓ change page; G toggles grid
+      window.addEventListener('keydown', (e) => {
+        const k = e.key;
+        if (k === 'ArrowRight') galleries[section].next();
+        else if (k === 'ArrowLeft') galleries[section].prev();
+        else if (k === 'ArrowDown' || k === 'PageDown') { e.preventDefault(); goSection(section + 1); }
+        else if (k === 'ArrowUp'   || k === 'PageUp')   { e.preventDefault(); goSection(section - 1); }
+        else if (k.toLowerCase() === 'g') galleries.forEach(g => g.toggleOverlay());
+      });
+
+      // Rebuild galleries when crossing the mobile/desktop breakpoint (1 vs 2 per view)
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          const np = getPerView();
+          if (np !== perView) {
+            perView = np;
+            galleries.forEach(g => g.rebuild());
+            renderPagination();
+          }
+        }, 150);
+      });
+
+      // Basic touch swipe (vertical)
+      let touchY = null;
+      window.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
+      window.addEventListener('touchend', (e) => {
+        if (touchY === null) return;
+        const dy = touchY - e.changedTouches[0].clientY;
+        if (Math.abs(dy) > 40) goSection(section + (dy > 0 ? 1 : -1));
+        touchY = null;
+      }, { passive: true });
+    })();
   </script>
 </body>
 </html>
