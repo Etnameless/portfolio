@@ -3,33 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f6f6f6">
-  <title>Xavier TS</title>
+  <meta name="theme-color" content="#ffffff">
+  <title>Xavier T.S</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      text-align: center;
-    }
-    .holding h1 {
-      font-size: clamp(1.5rem, 3vw, 2.5rem);
-      font-weight: 500;
-      letter-spacing: -0.02em;
-    }
-    .holding p {
-      margin-top: 12px;
-      font-size: 0.875rem;
-      color: var(--stone);
-    }
-  </style>
 </head>
 <body>
-  <div class="holding">
-    <h1>Xavier TS</h1>
-    <p>Coming soon.</p>
+  <div class="page">
+
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar">
+      <header class="brand">Xavier T.S</header>
+
+      <section class="project-info">
+        <p class="info-label">Project</p>
+        <div class="info-body" id="info-body"><!-- filled by JS --></div>
+      </section>
+    </aside>
+
+    <!-- ===== Gallery ===== -->
+    <section class="gallery" id="gallery" aria-label="Project images — click to advance">
+      <div class="track" id="track"><!-- slides filled by JS --></div>
+    </section>
+
+    <!-- ===== Footer row ===== -->
+    <nav class="menu">
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="#projects">Projects</a>
+    </nav>
+
+    <div class="pagination" id="pagination"><!-- numbers filled by JS --></div>
+
+    <!-- ===== Grid overlay (toggle with "G") ===== -->
+    <div class="grid-overlay" id="grid-overlay" aria-hidden="true"><!-- columns filled by JS --></div>
+
   </div>
+
+  <script>
+    // ===== Project data (placeholder content for layout pass) =====
+    const projects = [
+      {
+        body: [
+          "Identity development for an alternative medicine telehealth clinic created by Aura theraputics.",
+          "Designed in partnership with Samson Ossendryver Studio.",
+          "Images used in this concept are not owned or produced by Aura theraputics."
+        ]
+      },
+      { body: ["Brand identity and wordmark for an emerging Sydney fashion label.", "Art direction and typographic system."] },
+      { body: ["Exhibition identity and wayfinding for a university honours show.", "Print and environmental graphics."] },
+      { body: ["Editorial design and layout system for an independent print publication.", "Cover to cover art direction."] },
+      { body: ["Visual identity for a hospitality venue.", "Signage, menus and collateral."] },
+      { body: ["Packaging and label design for a small-batch product line.", "Structural and surface design."] },
+      { body: ["Digital product and interface explorations.", "Design system and prototyping."] }
+    ];
+
+    const track      = document.getElementById('track');
+    const infoBody   = document.getElementById('info-body');
+    const pagination = document.getElementById('pagination');
+    let current = 0;
+
+    // Build slides (2 panels each, placeholder mauve)
+    track.innerHTML = projects.map(() =>
+      `<div class="slide">
+         <figure class="panel"></figure>
+         <figure class="panel"></figure>
+       </div>`
+    ).join('');
+
+    // Build pagination numbers
+    pagination.innerHTML = projects.map((_, i) =>
+      `<button class="page-num" data-i="${i}" aria-label="Project ${i + 1}">${i + 1}</button>`
+    ).join('');
+    const pages = Array.from(pagination.children);
+
+    function render() {
+      track.style.transform = `translateX(${-current * 100}%)`;
+      infoBody.innerHTML = projects[current].body.map(p => `<p>${p}</p>`).join('');
+      pages.forEach((b, i) => b.classList.toggle('active', i === current));
+    }
+
+    function go(i) {
+      const n = projects.length;
+      current = ((i % n) + n) % n; // wrap both directions
+      render();
+    }
+
+    // Click gallery → next project
+    document.getElementById('gallery').addEventListener('click', () => go(current + 1));
+
+    // Click a number → jump to project
+    pagination.addEventListener('click', (e) => {
+      const btn = e.target.closest('.page-num');
+      if (btn) go(Number(btn.dataset.i));
+    });
+
+    // ===== Grid overlay =====
+    const overlay = document.getElementById('grid-overlay');
+    const COLS = 20;
+    overlay.innerHTML = Array.from({ length: COLS }, () => '<span></span>').join('');
+
+    // Arrow keys → horizontal navigation, "G" → toggle grid overlay
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') go(current + 1);
+      if (e.key === 'ArrowLeft')  go(current - 1);
+      if (e.key.toLowerCase() === 'g') overlay.classList.toggle('visible');
+    });
+
+    render();
+  </script>
 </body>
 </html>
