@@ -117,7 +117,13 @@
           firstImage = views[current][0];
           render();
         }
-        page.querySelector('.gallery').addEventListener('click', () => go(current + 1));
+        // Click left half (the left image) → previous set; right half → next set
+        const gallery = page.querySelector('.gallery');
+        gallery.addEventListener('click', (e) => {
+          const rect = gallery.getBoundingClientRect();
+          const onLeftHalf = (e.clientX - rect.left) < rect.width / 2;
+          go(current + (onLeftHalf ? -1 : 1));
+        });
         build();
 
         return {
@@ -228,14 +234,28 @@
         }, 150);
       });
 
-      // Basic touch swipe (vertical)
-      let touchY = null;
-      window.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
+      // Touch swipe: horizontal → navigate images, vertical → change page
+      const SWIPE_MIN = 40;
+      let touchX = null, touchY = null;
+      window.addEventListener('touchstart', (e) => {
+        touchX = e.touches[0].clientX;
+        touchY = e.touches[0].clientY;
+      }, { passive: true });
       window.addEventListener('touchend', (e) => {
-        if (touchY === null) return;
+        if (touchX === null) return;
+        const dx = touchX - e.changedTouches[0].clientX;
         const dy = touchY - e.changedTouches[0].clientY;
-        if (Math.abs(dy) > 40) goSection(section + (dy > 0 ? 1 : -1));
-        touchY = null;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          // horizontal swipe → images on the current page
+          if (Math.abs(dx) > SWIPE_MIN) {
+            if (dx > 0) galleries[section].next();   // swipe left → next set
+            else        galleries[section].prev();   // swipe right → previous set
+          }
+        } else if (Math.abs(dy) > SWIPE_MIN) {
+          // vertical swipe → change page
+          goSection(section + (dy > 0 ? 1 : -1));
+        }
+        touchX = touchY = null;
       }, { passive: true });
     })();
   </script>
