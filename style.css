@@ -36,7 +36,8 @@
   --placeholder: #806b6e;   /* mauve from reference */
 
   /* ===== Grid system (1440 reference, fluid) ===== */
-  --margin: 32px;           /* fixed side / frame margin */
+  --margin: 16px;           /* horizontal frame margin (tight, like the reference) */
+  --margin-y: 10px;         /* vertical frame margin — tighter top/bottom */
   --gutter: 8px;            /* gutter between the 20 columns */
   --columns: 20;
   --baseline: 4px;          /* vertical rhythm unit */
@@ -93,7 +94,7 @@ a:hover { opacity: 0.5; }
 .chrome {
   position: absolute;
   inset: 0;
-  padding: var(--margin);
+  padding: var(--margin-y) var(--margin);
   display: grid;
   grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
   grid-template-rows: minmax(0, 1fr) var(--footer-h);
@@ -119,7 +120,7 @@ a:hover { opacity: 0.5; }
   grid-template-rows: minmax(0, 1fr) var(--footer-h);
   column-gap: var(--gutter);
   row-gap: var(--row-gap);
-  padding: var(--margin);
+  padding: var(--margin-y) var(--margin);
   overflow: hidden;
 }
 
@@ -262,12 +263,12 @@ a:hover { opacity: 0.5; }
 
   .brand {
     position: absolute;
-    top: var(--margin);
+    top: var(--margin-y);
     left: var(--margin);
   }
   .project-info {
     position: absolute;
-    top: calc(var(--margin) + 28px);
+    top: calc(var(--margin-y) + 24px);
     left: var(--margin);
     right: var(--margin);
     margin: 0;
@@ -277,12 +278,12 @@ a:hover { opacity: 0.5; }
   }
   .menu {
     position: absolute;
-    bottom: var(--margin);
+    bottom: var(--margin-y);
     left: var(--margin);
   }
   .pagination {
     position: absolute;
-    bottom: var(--margin);
+    bottom: var(--margin-y);
     right: var(--margin);
   }
 
@@ -290,10 +291,11 @@ a:hover { opacity: 0.5; }
   .page { display: block; }
   .gallery {
     position: absolute;
-    top: 250px;
+    top: 215px;
     left: var(--margin);
     right: var(--margin);
-    bottom: 44px;
+    /* clear the footer text by one left-margin's worth of space */
+    bottom: calc(var(--margin-y) + 14px + var(--margin));
   }
   .slide { grid-template-columns: 1fr; }
   .grid-overlay { display: none; }
