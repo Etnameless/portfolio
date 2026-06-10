@@ -57,17 +57,17 @@
       const perView = 2;
       const mqMobile = window.matchMedia('(max-width: 720px)');
 
-      // Custom left/right arrow cursors (white halo + black chevron, visible on any image)
+      // Minimal thin-line left/right arrow cursors
       function arrowCursor(dir) {
         const d = dir === 'left' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7';
         const svg =
           "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>" +
-          "<path d='" + d + "' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/>" +
-          "<path d='" + d + "' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>";
+          "<path d='" + d + "' fill='none' stroke='black' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/></svg>";
         return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '") 12 12, pointer';
       }
       const cursorLeft = arrowCursor('left');
       const cursorRight = arrowCursor('right');
+      const EDGE_PX = 6;   // px-wide strip at each edge of the frame that navigates
 
       // Per-page text (shown in the fixed chrome; fades + swaps on page change)
       const PROJECTS = [
@@ -151,21 +151,29 @@
         }
         // Click left half (the left image) → previous set; right half → next set
         const gallery = page.querySelector('.gallery');
+        // Which edge zone is the pointer in? ('L' left edge, 'R' right edge, 'M' middle)
+        function edgeZone(e) {
+          const rect = gallery.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          if (x < EDGE_PX) return 'L';
+          if (x > rect.width - EDGE_PX) return 'R';
+          return 'M';
+        }
         gallery.addEventListener('click', (e) => {
           if (mqMobile.matches) return;   // mobile uses native scroll, not click-nav
-          const rect = gallery.getBoundingClientRect();
-          const onLeftHalf = (e.clientX - rect.left) < rect.width / 2;
-          go(current + (onLeftHalf ? -1 : 1));
+          const z = edgeZone(e);
+          if (z === 'L') go(current - 1);
+          else if (z === 'R') go(current + 1);
+          // middle: do nothing
         });
-        // Hover: show a left/right arrow cursor for the side you're over
-        let cursorSide = null;
+        // Hover: arrow cursor only at the edges; default cursor in the middle
+        let cursorZone = null;
         gallery.addEventListener('mousemove', (e) => {
           if (mqMobile.matches) return;
-          const rect = gallery.getBoundingClientRect();
-          const side = (e.clientX - rect.left) < rect.width / 2 ? 'L' : 'R';
-          if (side !== cursorSide) {
-            gallery.style.cursor = side === 'L' ? cursorLeft : cursorRight;
-            cursorSide = side;
+          const z = edgeZone(e);
+          if (z !== cursorZone) {
+            gallery.style.cursor = z === 'L' ? cursorLeft : z === 'R' ? cursorRight : 'default';
+            cursorZone = z;
           }
         });
         build();
