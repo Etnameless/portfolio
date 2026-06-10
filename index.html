@@ -57,6 +57,18 @@
       const perView = 2;
       const mqMobile = window.matchMedia('(max-width: 720px)');
 
+      // Custom left/right arrow cursors (white halo + black chevron, visible on any image)
+      function arrowCursor(dir) {
+        const d = dir === 'left' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7';
+        const svg =
+          "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>" +
+          "<path d='" + d + "' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/>" +
+          "<path d='" + d + "' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>";
+        return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '") 12 12, pointer';
+      }
+      const cursorLeft = arrowCursor('left');
+      const cursorRight = arrowCursor('right');
+
       // Per-page text (shown in the fixed chrome; fades + swaps on page change)
       const PROJECTS = [
         {
@@ -125,7 +137,10 @@
           render();
         }
         function render() {
-          track.style.transform = `translateX(${-current * 100}%)`;
+          const slides = track.children;
+          for (let i = 0; i < slides.length; i++) {
+            slides[i].classList.toggle('active', i === current);
+          }
           if (onChange) onChange();
         }
         function go(viewIndex) {
@@ -141,6 +156,17 @@
           const rect = gallery.getBoundingClientRect();
           const onLeftHalf = (e.clientX - rect.left) < rect.width / 2;
           go(current + (onLeftHalf ? -1 : 1));
+        });
+        // Hover: show a left/right arrow cursor for the side you're over
+        let cursorSide = null;
+        gallery.addEventListener('mousemove', (e) => {
+          if (mqMobile.matches) return;
+          const rect = gallery.getBoundingClientRect();
+          const side = (e.clientX - rect.left) < rect.width / 2 ? 'L' : 'R';
+          if (side !== cursorSide) {
+            gallery.style.cursor = side === 'L' ? cursorLeft : cursorRight;
+            cursorSide = side;
+          }
         });
         build();
 

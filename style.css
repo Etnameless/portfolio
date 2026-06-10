@@ -179,19 +179,22 @@ a:hover { opacity: 0.5; }
 }
 
 .track {
-  display: flex;
+  position: relative;
   height: 100%;
-  will-change: transform;
-  /* slow, smooth ease-in-out glide (eases both start and finish) */
-  transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+/* Pairs are stacked and crossfade between each other */
 .slide {
-  flex: 0 0 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--gutter);
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+.slide.active {
+  opacity: 1;
 }
 
 .panel {
@@ -298,17 +301,18 @@ a:hover { opacity: 0.5; }
     cursor: default;
   }
   .track {
-    flex-direction: column;
-    height: auto;
-    transform: none !important;
-    transition: none;
-    gap: var(--gutter);
-  }
-  .slide {
     display: flex;
     flex-direction: column;
     height: auto;
     gap: var(--gutter);
+  }
+  .slide {
+    position: static;        /* back in flow for the continuous scroll */
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    gap: var(--gutter);
+    opacity: 1;              /* all pairs visible, no crossfade */
   }
   .panel {
     height: auto;
