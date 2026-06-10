@@ -286,12 +286,13 @@
             if (r > bestRatio) { bestRatio = r; best = i; }
           });
           if (best !== section) { section = best; renderProjectInfo(); }
-        }, { root: viewport, threshold: [0, 0.25, 0.5, 0.75, 1] });
+        }, { root: null, threshold: [0, 0.25, 0.5, 0.75, 1] });
         pageEls.forEach(p => scrollSpy.observe(p));
       }
       mqMobile.addEventListener('change', () => {
         section = 0;
-        if (!mqMobile.matches) { viewport.scrollTop = 0; pagesWrap.style.transform = 'translateY(0vh)'; }
+        window.scrollTo(0, 0);
+        if (!mqMobile.matches) pagesWrap.style.transform = 'translateY(0vh)';
         renderProjectInfo();
         setupScrollSpy();
       });
