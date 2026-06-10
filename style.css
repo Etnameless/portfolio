@@ -197,6 +197,16 @@ a:hover { opacity: 0.5; }
 .panel {
   height: 100%;
   background-color: var(--placeholder);
+  overflow: hidden;
+}
+.panel:has(img) {
+  background: none;    /* contained image sits on the page, no colour fill */
+}
+.panel img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* fit the whole image inside the box (no cropping) */
 }
 
 /* ===== Footer row ===== */

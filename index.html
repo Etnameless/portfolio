@@ -64,6 +64,16 @@
             "Identity development for an alternative medicine telehealth clinic created by Aura theraputics.",
             "Designed in partnership with Samson Ossendryver Studio.",
             "Images used in this concept are not owned or produced by Aura theraputics."
+          ],
+          images: [
+            "images/Project%201/UTS/01.jpg",
+            "images/Project%201/UTS/02.jpg",
+            "images/Project%201/UTS/03.jpg",
+            "images/Project%201/UTS/04.jpg",
+            "images/Project%201/UTS/05.jpg",
+            "images/Project%201/UTS/06.jpg",
+            "images/Project%201/UTS/07.jpg",
+            "images/Project%201/UTS/08.jpg"
           ]
         },
         {
@@ -72,7 +82,8 @@
             "Identity development for an alternative medicine telehealth clinic created by Aura theraputics.",
             "Designed in partnership with Samson Ossendryver Studio.",
             "Images used in this concept are not owned or produced by Aura theraputics."
-          ]
+          ],
+          images: []   // placeholder boxes until real images are added
         }
       ];
 
@@ -88,9 +99,11 @@
       }
 
       // ---- Per-page gallery (track + overlay). Text + pagination are external. ----
-      function initGallery(page, onChange) {
+      function initGallery(page, project, onChange) {
         const track    = page.querySelector('.track');
         const overlay  = page.querySelector('.grid-overlay');
+        const images   = project.images || [];
+        const count    = images.length || IMAGE_COUNT;   // fall back to placeholder boxes
         let views = [];
         let current = 0;
         let firstImage = 0;   // preserved across rebuilds so we stay on the same image
@@ -98,9 +111,13 @@
         overlay.innerHTML = Array.from({ length: 20 }, () => '<span></span>').join('');
 
         function build() {
-          views = buildViews(IMAGE_COUNT, perView);
+          views = buildViews(count, perView);
           track.innerHTML = views.map(view =>
-            `<div class="slide">${view.map(() => '<figure class="panel"></figure>').join('')}</div>`
+            `<div class="slide">${view.map(i =>
+              images.length
+                ? `<figure class="panel"><img src="${images[i]}" alt="" loading="lazy"></figure>`
+                : `<figure class="panel"></figure>`
+            ).join('')}</div>`
           ).join('');
           current = views.findIndex(v => v.includes(firstImage));
           if (current < 0) current = 0;
@@ -131,6 +148,7 @@
           prev: () => go(current - 1),
           get current() { return current; },
           get views() { return views; },
+          get imageCount() { return count; },
           rebuild: build,
           toggleOverlay: () => overlay.classList.toggle('visible')
         };
@@ -155,18 +173,19 @@
         viewport.classList.remove('expanded');   // reset to collapsed on page change
       }
 
-      // ---- Shared, fixed pagination (controls + reflects the current page) ----
+      // ---- Shared, fixed pagination (rebuilt per project, reflects the current page) ----
       const pagination = document.getElementById('pagination');
-      pagination.innerHTML = Array.from({ length: IMAGE_COUNT }, (_, i) =>
-        `<button class="page-num" data-img="${i}" aria-label="Image ${i + 1}">${i + 1}</button>`
-      ).join('');
-      const numbers = Array.from(pagination.children);
+      function buildPagination(count) {
+        pagination.innerHTML = Array.from({ length: count }, (_, i) =>
+          `<button class="page-num" data-img="${i}" aria-label="Image ${i + 1}">${i + 1}</button>`
+        ).join('');
+      }
 
       function renderPagination() {
         const g = galleries[section];
         if (!g) return;
         const visible = g.views[g.current];
-        numbers.forEach((b, i) => b.classList.toggle('active', visible.includes(i)));
+        pagination.querySelectorAll('.page-num').forEach((b, i) => b.classList.toggle('active', visible.includes(i)));
       }
 
       pagination.addEventListener('click', (e) => {
@@ -178,7 +197,8 @@
         if (vi !== -1) g.go(vi);
       });
 
-      galleries = pageEls.map(p => initGallery(p, renderPagination));
+      galleries = pageEls.map((p, i) => initGallery(p, PROJECTS[i], renderPagination));
+      buildPagination(galleries[section].imageCount);
       renderPagination();
       renderProjectInfo();
 
@@ -197,6 +217,7 @@
         projectInfo.classList.add('fade');
         pagesWrap.style.transform = `translateY(${-section * 100}vh)`;
         setTimeout(() => {
+          buildPagination(galleries[section].imageCount);
           renderPagination();
           renderProjectInfo();
           pagination.classList.remove('fade');
