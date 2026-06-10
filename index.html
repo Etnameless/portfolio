@@ -57,17 +57,32 @@
       const perView = 2;
       const mqMobile = window.matchMedia('(max-width: 720px)');
 
-      // Minimal thin-line left/right arrow cursors
-      function arrowCursor(dir) {
+      // Minimal thin-line left/right arrow cursor in a given colour
+      function arrowCursor(dir, color) {
         const d = dir === 'left' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7';
         const svg =
           "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>" +
-          "<path d='" + d + "' fill='none' stroke='black' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/></svg>";
+          "<path d='" + d + "' fill='none' stroke='" + color + "' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/></svg>";
         return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '") 12 12, pointer';
       }
-      const cursorLeft = arrowCursor('left');
-      const cursorRight = arrowCursor('right');
-      const EDGE_PX = 6;   // px-wide strip at each edge of the frame that navigates
+      const EDGE_PX = 10;   // px-wide strip at each edge of the frame that navigates
+
+      // Sample an image's left/right edge luminance → contrasting arrow colour
+      function edgeArrowColor(img, side) {
+        try {
+          if (!img || !img.complete || !img.naturalWidth) return 'black';
+          const c = document.createElement('canvas');
+          c.width = 4; c.height = 40;
+          const ctx = c.getContext('2d');
+          const sw = Math.max(1, Math.round(img.naturalWidth * 0.12));
+          const sx = side === 'left' ? 0 : img.naturalWidth - sw;
+          ctx.drawImage(img, sx, 0, sw, img.naturalHeight, 0, 0, 4, 40);
+          const data = ctx.getImageData(0, 0, 4, 40).data;
+          let sum = 0, n = 0;
+          for (let i = 0; i < data.length; i += 4) { sum += 0.299*data[i] + 0.587*data[i+1] + 0.114*data[i+2]; n++; }
+          return (sum / n) < 128 ? 'white' : 'black';
+        } catch (e) { return 'black'; }
+      }
 
       // Per-page text (shown in the fixed chrome; fades + swaps on page change)
       const PROJECTS = [
@@ -120,6 +135,9 @@
         let views = [];
         let current = 0;
         let firstImage = 0;   // preserved across rebuilds so we stay on the same image
+        let curL = arrowCursor('left', 'black');
+        let curR = arrowCursor('right', 'black');
+        let cursorZone = null;
 
         overlay.innerHTML = Array.from({ length: 20 }, () => '<span></span>').join('');
 
@@ -141,7 +159,23 @@
           for (let i = 0; i < slides.length; i++) {
             slides[i].classList.toggle('active', i === current);
           }
+          updateCursorColors();
           if (onChange) onChange();
+        }
+        // Pick a black/white arrow per visible image so it stays legible
+        function updateCursorColors() {
+          if (mqMobile.matches) return;
+          const slide = track.children[current];
+          if (!slide) return;
+          const imgs = slide.querySelectorAll('img');
+          if (imgs[0]) {
+            const apply = () => { curL = arrowCursor('left', edgeArrowColor(imgs[0], 'left')); cursorZone = null; };
+            imgs[0].complete ? apply() : imgs[0].addEventListener('load', apply, { once: true });
+          }
+          if (imgs[1]) {
+            const apply = () => { curR = arrowCursor('right', edgeArrowColor(imgs[1], 'right')); cursorZone = null; };
+            imgs[1].complete ? apply() : imgs[1].addEventListener('load', apply, { once: true });
+          }
         }
         function go(viewIndex) {
           const n = views.length;
@@ -167,12 +201,11 @@
           // middle: do nothing
         });
         // Hover: arrow cursor only at the edges; default cursor in the middle
-        let cursorZone = null;
         gallery.addEventListener('mousemove', (e) => {
           if (mqMobile.matches) return;
           const z = edgeZone(e);
           if (z !== cursorZone) {
-            gallery.style.cursor = z === 'L' ? cursorLeft : z === 'R' ? cursorRight : 'default';
+            gallery.style.cursor = z === 'L' ? curL : z === 'R' ? curR : 'default';
             cursorZone = z;
           }
         });
