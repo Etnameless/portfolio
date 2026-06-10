@@ -267,91 +267,98 @@ a:hover { opacity: 0.5; }
 
 /* ===== Responsive ===== */
 @media (max-width: 720px) {
-  /* Chrome pieces are positioned absolutely so they don't depend on the
-     page-grid row heights (which can't match across the two overlaid layers). */
-  .chrome { display: block; }
+  /* ===== Mobile: one continuous native scroll through every image ===== */
+  .viewport {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    border: none;
+  }
+  .pages {
+    transform: none !important;   /* no paged animation */
+    transition: none;
+    display: block;
+    height: auto;
+    padding: 72px var(--margin) 44px;   /* clear the fixed header / footer */
+  }
+  .page {
+    display: block;
+    height: auto;
+    padding: 0;
+  }
+  .page + .page { margin-top: 48px; }   /* gap between projects */
+
+  /* Galleries become a simple vertical list of full-width images */
+  .gallery {
+    position: static;
+    height: auto;
+    overflow: visible;
+    cursor: default;
+  }
+  .track {
+    flex-direction: column;
+    height: auto;
+    transform: none !important;
+    transition: none;
+    gap: var(--gutter);
+  }
+  .slide {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    gap: var(--gutter);
+  }
+  .panel {
+    height: auto;
+    min-height: 0;
+  }
+  .panel img {
+    width: 100%;
+    height: auto;            /* natural aspect ratio, no cropping */
+  }
+  .panel:not(:has(img)) {    /* keep placeholder boxes visible */
+    aspect-ratio: 3 / 4;
+  }
+
+  /* ===== Fixed chrome: brand + scroll-spy title (top), menu (bottom) ===== */
+  .chrome { position: fixed; display: block; }   /* not a grid on mobile */
+  .chrome::before,
+  .chrome::after {           /* white masks so images don't show behind text */
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    z-index: 0;
+  }
+  .chrome::before { top: 0;    height: 60px; }
+  .chrome::after  { bottom: 0; height: 36px; }
 
   .brand {
     position: absolute;
     top: var(--margin-y);
     left: var(--margin);
+    z-index: 1;
   }
   .project-info {
     position: absolute;
-    top: calc(var(--margin-y) + 24px);
+    top: calc(var(--margin-y) + 22px);
     left: var(--margin);
     right: var(--margin);
     margin: 0;
     max-width: none;
-    font-size: 1rem;        /* ~12px base → reads more standardly than 0.85em */
-    line-height: 1.45;
+    font-size: 1rem;
+    z-index: 1;
   }
-  /* Collapsible: only the title shows; tap it to reveal the text */
-  .info-label {
-    pointer-events: auto;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    margin-bottom: 0;
-  }
-  .info-label::after {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-right: 1.5px solid currentColor;
-    border-bottom: 1.5px solid currentColor;
-    transform: translateY(-2px) rotate(45deg);    /* down chevron */
-    transition: transform 0.3s ease;
-  }
-  .viewport.expanded .info-label::after {
-    transform: translateY(1px) rotate(-135deg);   /* up chevron */
-  }
-  .info-body {
-    max-height: 0;
-    margin-top: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.45s ease, opacity 0.45s ease, margin-top 0.45s ease;
-  }
-  .viewport.expanded .info-body {
-    max-height: 60vh;
-    margin-top: 12px;
-    opacity: 1;
-  }
+  .info-label { margin-bottom: 0; }
+  .info-body  { display: none; }   /* title only in the fixed header */
+
   .menu {
     position: absolute;
     bottom: var(--margin-y);
     left: var(--margin);
+    z-index: 1;
   }
-  .pagination {
-    position: absolute;
-    bottom: var(--margin-y);
-    right: var(--margin);
-  }
-
-  /* Gallery fills the band between the title/text and the footer */
-  .page { display: block; }
-  .gallery {
-    position: absolute;
-    top: 64px;              /* collapsed: just below the title */
-    left: var(--margin);
-    right: var(--margin);
-    /* clear the footer text by one left-margin's worth of space */
-    bottom: calc(var(--margin-y) + 14px + var(--margin));
-    transition: top 0.45s ease;
-  }
-  .viewport.expanded .gallery {
-    top: 215px;             /* expanded: drop below the revealed text */
-  }
-  /* two images stacked vertically (container split horizontally) */
-  .slide {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
-  .panel {
-    height: auto;           /* let each panel stretch to its row, not full height */
-    min-height: 0;
-  }
+  .pagination { display: none; }   /* no numbers on mobile */
   .grid-overlay { display: none; }
 }

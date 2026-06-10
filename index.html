@@ -55,6 +55,7 @@
       const IMAGE_COUNT = 6;
       // two boxes per view (side-by-side on desktop, stacked on mobile)
       const perView = 2;
+      const mqMobile = window.matchMedia('(max-width: 720px)');
 
       // Per-page text (shown in the fixed chrome; fades + swaps on page change)
       const PROJECTS = [
@@ -136,6 +137,7 @@
         // Click left half (the left image) → previous set; right half → next set
         const gallery = page.querySelector('.gallery');
         gallery.addEventListener('click', (e) => {
+          if (mqMobile.matches) return;   // mobile uses native scroll, not click-nav
           const rect = gallery.getBoundingClientRect();
           const onLeftHalf = (e.clientX - rect.left) < rect.width / 2;
           go(current + (onLeftHalf ? -1 : 1));
@@ -227,8 +229,9 @@
         setTimeout(() => { animating = false; }, TRANSITION_MS + FADE_MS);
       }
 
-      // Wheel → move one section (locked during the transition)
+      // Wheel → move one section (desktop only; mobile scrolls natively)
       window.addEventListener('wheel', (e) => {
+        if (mqMobile.matches) return;
         e.preventDefault();
         if (animating || Math.abs(e.deltaY) < 8) return;
         goSection(section + (e.deltaY > 0 ? 1 : -1));
@@ -244,10 +247,11 @@
         else if (k.toLowerCase() === 'g') galleries.forEach(g => g.toggleOverlay());
       });
 
-      // Touch swipe: horizontal → navigate images, vertical → change page
+      // Touch swipe (desktop-paged model only). On mobile we use native scroll.
       const SWIPE_MIN = 40;
       let touchX = null, touchY = null;
       window.addEventListener('touchstart', (e) => {
+        if (mqMobile.matches) return;   // let native scroll handle mobile
         touchX = e.touches[0].clientX;
         touchY = e.touches[0].clientY;
       }, { passive: true });
@@ -267,6 +271,31 @@
         }
         touchX = touchY = null;
       }, { passive: true });
+
+      // ---- Mobile: continuous scroll updates the project title (scroll-spy) ----
+      let scrollSpy = null;
+      function setupScrollSpy() {
+        if (scrollSpy) { scrollSpy.disconnect(); scrollSpy = null; }
+        if (!mqMobile.matches) return;
+        const ratios = new Map();
+        scrollSpy = new IntersectionObserver((entries) => {
+          entries.forEach(e => ratios.set(e.target, e.intersectionRatio));
+          let best = section, bestRatio = -1;
+          pageEls.forEach((p, i) => {
+            const r = ratios.get(p) || 0;
+            if (r > bestRatio) { bestRatio = r; best = i; }
+          });
+          if (best !== section) { section = best; renderProjectInfo(); }
+        }, { root: viewport, threshold: [0, 0.25, 0.5, 0.75, 1] });
+        pageEls.forEach(p => scrollSpy.observe(p));
+      }
+      mqMobile.addEventListener('change', () => {
+        section = 0;
+        if (!mqMobile.matches) { viewport.scrollTop = 0; pagesWrap.style.transform = 'translateY(0vh)'; }
+        renderProjectInfo();
+        setupScrollSpy();
+      });
+      setupScrollSpy();
     })();
   </script>
 </body>
