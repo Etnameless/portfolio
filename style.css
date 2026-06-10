@@ -281,7 +281,7 @@ a:hover { opacity: 0.5; }
     transition: none;
     display: block;
     height: auto;
-    padding: 72px var(--margin) 44px;   /* clear the fixed header / footer */
+    padding: 28px var(--margin) 28px;   /* sit tight under header / above footer */
   }
   .page {
     display: block;
@@ -333,8 +333,8 @@ a:hover { opacity: 0.5; }
     background: var(--bg);
     z-index: 0;
   }
-  .chrome::before { top: 0;    height: 60px; }
-  .chrome::after  { bottom: 0; height: 36px; }
+  .chrome::before { top: 0;    height: 28px; }
+  .chrome::after  { bottom: 0; height: 28px; }
 
   .brand {
     position: absolute;
@@ -344,11 +344,12 @@ a:hover { opacity: 0.5; }
   }
   .project-info {
     position: absolute;
-    top: calc(var(--margin-y) + 22px);
+    top: var(--margin-y);          /* inline with the brand */
     left: var(--margin);
     right: var(--margin);
     margin: 0;
     max-width: none;
+    text-align: right;             /* title sits at the right edge */
     z-index: 1;   /* inherits the global 0.85em so it matches the brand/menu */
   }
   .info-label { margin-bottom: 0; }
@@ -358,8 +359,14 @@ a:hover { opacity: 0.5; }
     position: absolute;
     bottom: var(--margin-y);
     left: var(--margin);
+    right: var(--margin);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;   /* About | Contact | Projects */
     z-index: 1;
   }
+  .menu a:nth-child(1) { justify-self: start; }
+  .menu a:nth-child(2) { justify-self: center; }
+  .menu a:nth-child(3) { justify-self: end; }
   .pagination { display: none; }   /* no numbers on mobile */
   .grid-overlay { display: none; }
 }
