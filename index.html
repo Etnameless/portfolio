@@ -146,10 +146,14 @@
       const projectInfo = document.getElementById('project-info');
       const infoLabel = projectInfo.querySelector('.info-label');
       const infoBody  = projectInfo.querySelector('.info-body');
+      const viewport  = document.querySelector('.viewport');
+      // Mobile: tap the title to expand/collapse the project text
+      infoLabel.addEventListener('click', () => viewport.classList.toggle('expanded'));
       function renderProjectInfo() {
         const p = PROJECTS[section];
         infoLabel.textContent = p.label;
         infoBody.innerHTML = p.body.map(x => `<p>${x}</p>`).join('');
+        viewport.classList.remove('expanded');   // reset to collapsed on page change
       }
 
       // ---- Shared, fixed pagination (controls + reflects the current page) ----

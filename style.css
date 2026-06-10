@@ -276,6 +276,39 @@ a:hover { opacity: 0.5; }
     font-size: 1rem;        /* ~12px base → reads more standardly than 0.85em */
     line-height: 1.45;
   }
+  /* Collapsible: only the title shows; tap it to reveal the text */
+  .info-label {
+    pointer-events: auto;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 0;
+  }
+  .info-label::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);    /* down chevron */
+    transition: transform 0.3s ease;
+  }
+  .viewport.expanded .info-label::after {
+    transform: translateY(1px) rotate(-135deg);   /* up chevron */
+  }
+  .info-body {
+    max-height: 0;
+    margin-top: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.45s ease, opacity 0.45s ease, margin-top 0.45s ease;
+  }
+  .viewport.expanded .info-body {
+    max-height: 60vh;
+    margin-top: 12px;
+    opacity: 1;
+  }
   .menu {
     position: absolute;
     bottom: var(--margin-y);
@@ -287,15 +320,19 @@ a:hover { opacity: 0.5; }
     right: var(--margin);
   }
 
-  /* Gallery fills the band between the top text block and the footer */
+  /* Gallery fills the band between the title/text and the footer */
   .page { display: block; }
   .gallery {
     position: absolute;
-    top: 215px;
+    top: 64px;              /* collapsed: just below the title */
     left: var(--margin);
     right: var(--margin);
     /* clear the footer text by one left-margin's worth of space */
     bottom: calc(var(--margin-y) + 14px + var(--margin));
+    transition: top 0.45s ease;
+  }
+  .viewport.expanded .gallery {
+    top: 215px;             /* expanded: drop below the revealed text */
   }
   .slide { grid-template-columns: 1fr; }
   .grid-overlay { display: none; }
