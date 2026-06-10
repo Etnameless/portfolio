@@ -349,8 +349,7 @@ a:hover { opacity: 0.5; }
     right: var(--margin);
     margin: 0;
     max-width: none;
-    font-size: 1rem;
-    z-index: 1;
+    z-index: 1;   /* inherits the global 0.85em so it matches the brand/menu */
   }
   .info-label { margin-bottom: 0; }
   .info-body  { display: none; }   /* title only in the fixed header */
