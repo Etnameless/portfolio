@@ -65,7 +65,7 @@
           "<path d='" + d + "' fill='none' stroke='" + color + "' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/></svg>";
         return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '") 12 12, pointer';
       }
-      const EDGE_PX = 10;   // px-wide strip at each edge of the frame that navigates
+      const EDGE_PX = 30;   // px-wide strip at each edge of the frame that navigates
 
       // Sample an image's left/right edge luminance → contrasting arrow colour
       function edgeArrowColor(img, side) {
