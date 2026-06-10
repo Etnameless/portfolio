@@ -334,6 +334,14 @@ a:hover { opacity: 0.5; }
   .viewport.expanded .gallery {
     top: 215px;             /* expanded: drop below the revealed text */
   }
-  .slide { grid-template-columns: 1fr; }
+  /* two images stacked vertically (container split horizontally) */
+  .slide {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .panel {
+    height: auto;           /* let each panel stretch to its row, not full height */
+    min-height: 0;
+  }
   .grid-overlay { display: none; }
 }
