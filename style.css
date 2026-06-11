@@ -127,8 +127,8 @@ a:hover { opacity: 0.5; }
 .overlay-inner p + p { margin-top: 14px; }
 
 /* While a menu item is open: hide the left text + the numbers, grey the active item */
-.menu-overlay .project-info { opacity: 0; pointer-events: none; }
-.menu-overlay .pagination  { opacity: 0; }
+.menu-overlay .chrome .project-info { opacity: 0; pointer-events: none; }
+.menu-overlay .chrome .pagination  { opacity: 0; pointer-events: none; }
 .menu a.active { color: var(--muted); }
 
 /* ===== Fixed chrome: brand + menu + pagination persist across pages ===== */

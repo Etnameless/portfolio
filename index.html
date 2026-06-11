@@ -484,6 +484,7 @@
 
       // Clicking the brand returns to the first project
       document.querySelector('.chrome .brand').addEventListener('click', () => {
+        if (document.getElementById('backdrop').classList.contains('open')) { closeMenuOverlay(); return; }
         if (mqMobile.matches) window.scrollTo({ top: 0, behavior: 'smooth' });
         else goSection(0);
       });
@@ -524,9 +525,11 @@
         a.addEventListener('click', (e) => {
           if (mqMobile.matches) return;   // desktop only
           e.preventDefault();
-          openMenuOverlay(a.textContent.trim(), a);
+          if (a.classList.contains('active')) closeMenuOverlay();   // toggle off
+          else openMenuOverlay(a.textContent.trim(), a);
         });
       });
+      const overlayOpen = () => backdrop.classList.contains('open');
       backdrop.addEventListener('click', closeMenuOverlay);
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeMenuOverlay();
@@ -538,6 +541,7 @@
       window.addEventListener('wheel', (e) => {
         if (mqMobile.matches) return;
         e.preventDefault();
+        if (overlayOpen()) return;   // locked while a menu overlay is open
         if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
           if (Math.abs(e.deltaX) < 8) return;
           clearTimeout(hSwipeTimer);
@@ -555,6 +559,7 @@
 
       // Keys: ←/→ navigate images on the current page; ↑/↓ change page; G toggles grid
       window.addEventListener('keydown', (e) => {
+        if (overlayOpen()) return;   // navigation locked while a menu overlay is open
         const k = e.key;
         if (k === 'ArrowRight') galleries[section].next();
         else if (k === 'ArrowLeft') galleries[section].prev();
