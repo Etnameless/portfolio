@@ -431,8 +431,15 @@ a:hover { opacity: 0.5; }
     max-width: none;
     text-align: right;             /* title sits at the right edge */
     z-index: 1;   /* inherits the global 0.85em so it matches the brand/menu */
+    pointer-events: none;          /* don't block taps over the brand on the left */
   }
-  .info-label { margin-bottom: 0; }
+  /* tappable title (inline-block → only the text area is clickable) */
+  .info-label {
+    margin-bottom: 0;
+    display: inline-block;
+    pointer-events: auto;
+    cursor: pointer;
+  }
   .info-body  { display: none; }   /* title only in the fixed header */
 
   .menu {

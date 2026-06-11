@@ -415,8 +415,13 @@
       const infoLabel = projectInfo.querySelector('.info-label');
       const infoBody  = projectInfo.querySelector('.info-body');
       const viewport  = document.querySelector('.viewport');
-      // Mobile: tap the title to expand/collapse the project text
-      infoLabel.addEventListener('click', () => viewport.classList.toggle('expanded'));
+      // Mobile: tap the project title to open the panel with that project's text
+      infoLabel.addEventListener('click', () => {
+        if (!mqMobile.matches) return;   // mobile only
+        const p = PROJECTS[section];
+        if (activeOverlay === p.label) { closeMenuOverlay(); return; }   // toggle
+        openMenuOverlay(p.label, p.body);
+      });
       function renderProjectInfo() {
         const p = PROJECTS[section];
         infoLabel.textContent = p.label;
@@ -525,10 +530,11 @@
         document.body.style.width = '';
         window.scrollTo(0, savedScroll);
       }
-      function openMenuOverlay(name) {
+      function openMenuOverlay(name, paragraphs) {
+        const content = paragraphs || OVERLAY[name] || [];
         viewport.classList.add('menu-overlay');
         backdrop.classList.add('open');
-        overlayInner.innerHTML = (OVERLAY[name] || []).map((t) => '<p>' + t + '</p>').join('');
+        overlayInner.innerHTML = content.map((t) => '<p>' + t + '</p>').join('');
         overlayContent.classList.add('open');
         activeOverlay = name;
         overlayLinks.forEach((a) => a.classList.toggle('active', a.textContent.trim() === name));
