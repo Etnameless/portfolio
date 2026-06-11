@@ -559,8 +559,8 @@
       function onMenuClick(a, e) {
         e.preventDefault();
         const name = a.textContent.trim();
-        if (activeOverlay === name) closeMenuOverlay();   // toggle off
-        else openMenuOverlay(name);
+        if (activeOverlay === name) return;   // already showing — stay open
+        openMenuOverlay(name);
       }
       chromeLinks.forEach((a) => a.addEventListener('click', (e) => onMenuClick(a, e)));
       overlayLinks.forEach((a) => a.addEventListener('click', (e) => onMenuClick(a, e)));
