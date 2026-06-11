@@ -10,26 +10,8 @@
 <body>
   <div class="viewport">
 
-    <!-- Scrolling content: project info + gallery per page -->
-    <div class="pages" id="pages">
-
-      <!-- ===================== PAGE / PROJECT 1 ===================== -->
-      <section class="page" data-project="1">
-        <section class="gallery" aria-label="Project images — click to advance">
-          <div class="track"><!-- slides filled by JS --></div>
-        </section>
-        <div class="grid-overlay" aria-hidden="true"><!-- columns filled by JS --></div>
-      </section>
-
-      <!-- ===================== PAGE / PROJECT 2 ===================== -->
-      <section class="page" data-project="2">
-        <section class="gallery" aria-label="Project images — click to advance">
-          <div class="track"><!-- slides filled by JS --></div>
-        </section>
-        <div class="grid-overlay" aria-hidden="true"><!-- columns filled by JS --></div>
-      </section>
-
-    </div>
+    <!-- Scrolling content: one .page per project, generated from PROJECTS by JS -->
+    <div class="pages" id="pages"></div>
 
     <!-- Fixed chrome: persists across pages; text + numbers fade on page change -->
     <div class="chrome">
@@ -118,6 +100,34 @@
             "images/Project%202/5.png",
             "images/Project%202/6.png",
             "images/Project%202/7.png"
+          ]
+        },
+        {
+          label: "Project 3",
+          body: [
+            "Identity development for an alternative medicine telehealth clinic created by Aura theraputics.",
+            "Designed in partnership with Samson Ossendryver Studio.",
+            "Images used in this concept are not owned or produced by Aura theraputics."
+          ],
+          firstSingle: true,
+          images: [
+            "images/Project%203/01.png",
+            "images/Project%203/2.jpg",
+            "images/Project%203/3.jpg"
+          ]
+        },
+        {
+          label: "Project 4",
+          body: [
+            "Identity development for an alternative medicine telehealth clinic created by Aura theraputics.",
+            "Designed in partnership with Samson Ossendryver Studio.",
+            "Images used in this concept are not owned or produced by Aura theraputics."
+          ],
+          firstSingle: true,
+          images: [
+            "images/Project%204/01.jpg",
+            "images/Project%204/02.jpg",
+            "images/Project%204/03.jpg"
           ]
         }
       ];
@@ -292,7 +302,17 @@
         };
       }
 
-      const pageEls = Array.from(document.querySelectorAll('.page'));
+      // Generate one .page per project from the data
+      const pagesWrap = document.getElementById('pages');
+      pagesWrap.innerHTML = PROJECTS.map((p, i) =>
+        '<section class="page" data-project="' + (i + 1) + '">' +
+          '<section class="gallery" aria-label="Project images — click to advance">' +
+            '<div class="track"></div>' +
+          '</section>' +
+          '<div class="grid-overlay" aria-hidden="true"></div>' +
+        '</section>'
+      ).join('');
+      const pageEls = Array.from(pagesWrap.querySelectorAll('.page'));
       let galleries = [];
       let section = 0;
       let animating = false;
@@ -341,8 +361,6 @@
       renderProjectInfo();
 
       // ---- Vertical section scroller ----
-      const pagesWrap = document.getElementById('pages');
-
       function goSection(target) {
         target = Math.max(0, Math.min(pageEls.length - 1, target));
         if (target === section || animating) return;
