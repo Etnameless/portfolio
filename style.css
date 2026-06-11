@@ -212,6 +212,9 @@ a:hover { opacity: 0.5; }
   pointer-events: none;        /* events go to the gallery, not the image */
   -webkit-user-drag: none;     /* no native image drag */
 }
+/* The two images hug the centre gutter so every pair sits at the same gap */
+.slide > .panel:first-child img { object-position: right center; }
+.slide > .panel:last-child  img { object-position: left center; }
 
 /* ===== Footer row ===== */
 .menu {
