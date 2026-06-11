@@ -159,6 +159,7 @@
           body: [
             "Promotional and educational work created while working as the design lead for AFTRS."
           ],
+          leadSingles: 2,   // images 01 and 02 stand alone, the rest are pairs
           images: [
             "images/Project%206_AFTRS/01.webp",
             "images/Project%206_AFTRS/02.webp",
@@ -167,9 +168,7 @@
             "images/Project%206_AFTRS/05.webp",
             "images/Project%206_AFTRS/06.webp",
             "images/Project%206_AFTRS/07.webp",
-            "images/Project%206_AFTRS/08.webp",
-            "images/Project%206_AFTRS/09.webp",
-            "images/Project%206_AFTRS/10.webp"
+            "images/Project%206_AFTRS/08.webp"
           ]
         },
         {
@@ -215,11 +214,13 @@
         }
       ];
 
-      // Group image indices into views of `per` (e.g. pairs (0,1)(2,3)(4,5) or singles)
-      function buildViews(count, per, firstSingle) {
+      // Group image indices into views of `per` (e.g. pairs (0,1)(2,3)(4,5) or singles).
+      // `leadSingles` images at the start are shown one-per-view, then the rest pair up.
+      function buildViews(count, per, leadSingles) {
         const views = [];
         let i = 0;
-        if (firstSingle && count > 0) { views.push([0]); i = 1; }   // standalone first image
+        const singles = Math.min(leadSingles || 0, count);
+        for (; i < singles; i++) views.push([i]);   // standalone leading images
         for (; i < count; i += per) {
           const view = [];
           for (let k = 0; k < per && i + k < count; k++) view.push(i + k);
@@ -244,7 +245,8 @@
         overlay.innerHTML = Array.from({ length: 20 }, () => '<span></span>').join('');
 
         function build() {
-          views = buildViews(count, perView, project.firstSingle);
+          const leadSingles = project.leadSingles != null ? project.leadSingles : (project.firstSingle ? 1 : 0);
+          views = buildViews(count, perView, leadSingles);
           track.innerHTML = views.map(view =>
             `<div class="slide${view.length === 1 ? ' single' : ''}">${view.map(i =>
               images.length
