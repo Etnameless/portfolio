@@ -476,6 +476,12 @@
         setTimeout(() => { animating = false; }, TRANSITION_MS + FADE_MS);
       }
 
+      // Clicking the brand returns to the first project
+      document.querySelector('.chrome .brand').addEventListener('click', () => {
+        if (mqMobile.matches) window.scrollTo({ top: 0, behavior: 'smooth' });
+        else goSection(0);
+      });
+
       // Wheel / trackpad (desktop only; mobile scrolls natively):
       // horizontal swipe → image sets on the current project, vertical → projects
       let hSwiped = false, hSwipeTimer = null;
