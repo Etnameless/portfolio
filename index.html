@@ -16,6 +16,9 @@
     <!-- Blur veil shown when a menu item is open -->
     <div class="backdrop" id="backdrop"></div>
 
+    <!-- Centred text shown when a menu item is open -->
+    <div class="overlay-content" id="overlay-content"><div class="overlay-inner"></div></div>
+
     <!-- Fixed chrome: persists across pages; text + numbers fade on page change -->
     <div class="chrome">
       <header class="brand">Xavier T.S</header>
@@ -485,18 +488,48 @@
         else goSection(0);
       });
 
-      // Desktop: clicking a menu item blurs the content frames behind a veil
+      // Desktop: clicking a menu item blurs the content frames, hides the left
+      // text + numbers, and fades centred text in (greying the active item)
       const backdrop = document.getElementById('backdrop');
-      document.querySelectorAll('.chrome .menu a').forEach((a) => {
+      const overlayContent = document.getElementById('overlay-content');
+      const overlayInner = overlayContent.querySelector('.overlay-inner');
+      const menuLinks = Array.from(document.querySelectorAll('.chrome .menu a'));
+      const OVERLAY = {
+        About: [
+          "Xavier T.S is a visual communication designer based in Sydney, Australia, working across branding, editorial and digital design.",
+          "Currently available for freelance projects and collaborations."
+        ],
+        Contact: [
+          "hello@xavierts.info",
+          "LinkedIn — Instagram"
+        ],
+        Projects: [
+          "Selected work, 2019–2024."
+        ]
+      };
+      function openMenuOverlay(name, link) {
+        viewport.classList.add('menu-overlay');
+        backdrop.classList.add('open');
+        overlayInner.innerHTML = (OVERLAY[name] || []).map((t) => '<p>' + t + '</p>').join('');
+        overlayContent.classList.add('open');
+        menuLinks.forEach((a) => a.classList.toggle('active', a === link));
+      }
+      function closeMenuOverlay() {
+        viewport.classList.remove('menu-overlay');
+        backdrop.classList.remove('open');
+        overlayContent.classList.remove('open');
+        menuLinks.forEach((a) => a.classList.remove('active'));
+      }
+      menuLinks.forEach((a) => {
         a.addEventListener('click', (e) => {
           if (mqMobile.matches) return;   // desktop only
           e.preventDefault();
-          backdrop.classList.add('open');
+          openMenuOverlay(a.textContent.trim(), a);
         });
       });
-      backdrop.addEventListener('click', () => backdrop.classList.remove('open'));
+      backdrop.addEventListener('click', closeMenuOverlay);
       window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') backdrop.classList.remove('open');
+        if (e.key === 'Escape') closeMenuOverlay();
       });
 
       // Wheel / trackpad (desktop only; mobile scrolls natively):

@@ -107,6 +107,30 @@ a:hover { opacity: 0.5; }
   pointer-events: auto;
 }
 
+/* Centred text shown over the blur; same size/style as the left text */
+.overlay-content {
+  position: fixed;
+  inset: 0;
+  z-index: 6;                       /* above the veil, below the chrome */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;    /* regular fade */
+}
+.overlay-content.open { opacity: 1; }
+.overlay-inner {
+  max-width: 340px;
+  text-align: center;
+}
+.overlay-inner p + p { margin-top: 14px; }
+
+/* While a menu item is open: hide the left text + the numbers, grey the active item */
+.menu-overlay .project-info { opacity: 0; pointer-events: none; }
+.menu-overlay .pagination  { opacity: 0; }
+.menu a.active { color: var(--muted); }
+
 /* ===== Fixed chrome: brand + menu + pagination persist across pages ===== */
 .chrome {
   position: absolute;
@@ -401,5 +425,6 @@ a:hover { opacity: 0.5; }
   .menu a:nth-child(3) { justify-self: end; }
   .pagination { display: none; }   /* no numbers on mobile */
   .grid-overlay { display: none; }
-  .backdrop { display: none; }   /* desktop-only feature */
+  .backdrop { display: none; }          /* desktop-only feature */
+  .overlay-content { display: none; }   /* desktop-only feature */
 }
