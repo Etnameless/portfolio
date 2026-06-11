@@ -527,15 +527,42 @@
         touchBlocker = null;
       }
       function openMenuOverlay(name, paragraphs) {
-        const content = paragraphs || OVERLAY[name] || [];
         viewport.classList.add('menu-overlay');
         backdrop.classList.add('open');
-        overlayInner.innerHTML = content.map((t) => '<p>' + t + '</p>').join('');
+        if (name === 'Projects' && !paragraphs) {
+          // clickable index of every project, top → bottom
+          overlayInner.innerHTML = PROJECTS.map((p, i) =>
+            `<p class="overlay-project" data-i="${i}">${p.label}</p>`).join('');
+        } else {
+          const content = paragraphs || OVERLAY[name] || [];
+          overlayInner.innerHTML = content.map((t) => '<p>' + t + '</p>').join('');
+        }
         overlayContent.classList.add('open');
         activeOverlay = name;
         overlayLinks.forEach((a) => a.classList.toggle('active', a.textContent.trim() === name));
         lockScroll();
       }
+      // Jump to where a project begins, then close the panel
+      function goToProject(i) {
+        closeMenuOverlay();
+        if (!mqMobile.matches) { goSection(i); return; }
+        const el = pageEls[i];
+        const align = () => {
+          const top = el.getBoundingClientRect().top + window.scrollY - 28;   // clear fixed header
+          window.scrollTo(0, Math.max(0, top));
+        };
+        align();
+        // lazy images above finish loading and shift layout, so re-align briefly
+        // until it settles (or until the user starts scrolling themselves)
+        let ticks = 0;
+        const timer = setInterval(() => { align(); if (++ticks >= 24) clearInterval(timer); }, 50);
+        const stop = () => { clearInterval(timer); window.removeEventListener('touchstart', stop); };
+        window.addEventListener('touchstart', stop, { passive: true });
+      }
+      overlayInner.addEventListener('click', (e) => {
+        const item = e.target.closest('.overlay-project');
+        if (item) goToProject(Number(item.dataset.i));
+      });
       function closeMenuOverlay() {
         viewport.classList.remove('menu-overlay');
         backdrop.classList.remove('open');
