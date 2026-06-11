@@ -107,7 +107,7 @@ a:hover { opacity: 0.5; }
   pointer-events: auto;
 }
 
-/* Centred text shown over the blur; same size/style as the left text */
+/* Centred, slightly transparent dark grey panel shown when a menu item is open */
 .overlay-content {
   position: fixed;
   inset: 0;
@@ -120,11 +120,29 @@ a:hover { opacity: 0.5; }
   transition: opacity 0.4s ease;    /* regular fade */
 }
 .overlay-content.open { opacity: 1; }
-.overlay-inner {
-  max-width: 340px;
-  text-align: center;
+.overlay-box {
+  width: 255px;
+  max-width: calc(100vw - 2 * var(--margin));
+  height: 35vh;
+  max-height: calc(100vh - 2 * var(--margin-y));
+  background: rgba(42, 42, 42, 0.8);   /* dark grey, slightly transparent */
+  border-radius: 8px;                  /* rounded corners */
+  padding: var(--margin-y) var(--margin);   /* tight margins around the text */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;      /* text top, menu bottom */
 }
+.overlay-inner { text-align: left; }
 .overlay-inner p + p { margin-top: 14px; }
+.overlay-menu {
+  display: flex;
+  justify-content: space-between;      /* About left, Contact centre, Projects right */
+  pointer-events: auto;                /* links clickable; rest of box closes */
+}
+.overlay-menu a { color: var(--text); text-decoration: none; }
+.overlay-menu a.active { color: var(--muted); }
+/* Chrome menu is hidden while the panel (with its own menu) is open */
+.menu-overlay .chrome .menu { opacity: 0; pointer-events: none; }
 
 /* While a menu item is open: hide the left text + the numbers, grey the active item */
 .menu-overlay .chrome .project-info { opacity: 0; pointer-events: none; }
@@ -425,6 +443,10 @@ a:hover { opacity: 0.5; }
   .menu a:nth-child(3) { justify-self: end; }
   .pagination { display: none; }   /* no numbers on mobile */
   .grid-overlay { display: none; }
-  .backdrop { display: none; }          /* desktop-only feature */
-  .overlay-content { display: none; }   /* desktop-only feature */
+
+  /* Menu overlay works on mobile too; panel fills the column width */
+  .overlay-box {
+    width: calc(100vw - 2 * var(--margin));
+    height: 35vh;
+  }
 }

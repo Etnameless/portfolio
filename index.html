@@ -16,8 +16,17 @@
     <!-- Blur veil shown when a menu item is open -->
     <div class="backdrop" id="backdrop"></div>
 
-    <!-- Centred text shown when a menu item is open -->
-    <div class="overlay-content" id="overlay-content"><div class="overlay-inner"></div></div>
+    <!-- Centred panel shown when a menu item is open -->
+    <div class="overlay-content" id="overlay-content">
+      <div class="overlay-box">
+        <div class="overlay-inner"></div>
+        <nav class="overlay-menu">
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+          <a href="#projects">Projects</a>
+        </nav>
+      </div>
+    </div>
 
     <!-- Fixed chrome: persists across pages; text + numbers fade on page change -->
     <div class="chrome">
@@ -494,7 +503,9 @@
       const backdrop = document.getElementById('backdrop');
       const overlayContent = document.getElementById('overlay-content');
       const overlayInner = overlayContent.querySelector('.overlay-inner');
-      const menuLinks = Array.from(document.querySelectorAll('.chrome .menu a'));
+      const chromeLinks = Array.from(document.querySelectorAll('.chrome .menu a'));
+      const overlayLinks = Array.from(document.querySelectorAll('.overlay-menu a'));
+      let activeOverlay = null;
       const OVERLAY = {
         About: [
           "Xavier T.S is a visual communication designer based in Sydney, Australia, working across branding, editorial and digital design.",
@@ -508,27 +519,51 @@
           "Selected work, 2019–2024."
         ]
       };
-      function openMenuOverlay(name, link) {
+      // Lock the document scroll while the panel is open (iOS-safe)
+      let savedScroll = 0;
+      function lockScroll() {
+        if (!mqMobile.matches) return;   // desktop is wheel-driven, not body-scrolled
+        savedScroll = window.scrollY || window.pageYOffset || 0;
+        document.body.style.position = 'fixed';
+        document.body.style.top = (-savedScroll) + 'px';
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100%';
+      }
+      function unlockScroll() {
+        if (document.body.style.position !== 'fixed') return;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        window.scrollTo(0, savedScroll);
+      }
+      function openMenuOverlay(name) {
         viewport.classList.add('menu-overlay');
         backdrop.classList.add('open');
         overlayInner.innerHTML = (OVERLAY[name] || []).map((t) => '<p>' + t + '</p>').join('');
         overlayContent.classList.add('open');
-        menuLinks.forEach((a) => a.classList.toggle('active', a === link));
+        activeOverlay = name;
+        overlayLinks.forEach((a) => a.classList.toggle('active', a.textContent.trim() === name));
+        lockScroll();
       }
       function closeMenuOverlay() {
         viewport.classList.remove('menu-overlay');
         backdrop.classList.remove('open');
         overlayContent.classList.remove('open');
-        menuLinks.forEach((a) => a.classList.remove('active'));
+        overlayLinks.forEach((a) => a.classList.remove('active'));
+        activeOverlay = null;
+        unlockScroll();
       }
-      menuLinks.forEach((a) => {
-        a.addEventListener('click', (e) => {
-          if (mqMobile.matches) return;   // desktop only
-          e.preventDefault();
-          if (a.classList.contains('active')) closeMenuOverlay();   // toggle off
-          else openMenuOverlay(a.textContent.trim(), a);
-        });
-      });
+      function onMenuClick(a, e) {
+        e.preventDefault();
+        const name = a.textContent.trim();
+        if (activeOverlay === name) closeMenuOverlay();   // toggle off
+        else openMenuOverlay(name);
+      }
+      chromeLinks.forEach((a) => a.addEventListener('click', (e) => onMenuClick(a, e)));
+      overlayLinks.forEach((a) => a.addEventListener('click', (e) => onMenuClick(a, e)));
       const overlayOpen = () => backdrop.classList.contains('open');
       backdrop.addEventListener('click', closeMenuOverlay);
       window.addEventListener('keydown', (e) => {
