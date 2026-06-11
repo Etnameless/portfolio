@@ -131,13 +131,13 @@ a:hover { opacity: 0.5; }
   display: flex;
   flex-direction: column;
   justify-content: space-between;      /* text top, menu bottom */
+  pointer-events: auto;                /* clicks inside the box do NOT close */
 }
 .overlay-inner { text-align: left; }
 .overlay-inner p + p { margin-top: 14px; }
 .overlay-menu {
   display: flex;
   justify-content: space-between;      /* About left, Contact centre, Projects right */
-  pointer-events: auto;                /* links clickable; rest of box closes */
 }
 .overlay-menu a { color: var(--text); text-decoration: none; }
 .overlay-menu a.active { color: var(--muted); }
