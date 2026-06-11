@@ -155,10 +155,7 @@
           render();
         }
         function render() {
-          const slides = track.children;
-          for (let i = 0; i < slides.length; i++) {
-            slides[i].classList.toggle('active', i === current);
-          }
+          track.style.transform = `translateX(${-current * 100}%)`;
           updateCursorColors();
           if (onChange) onChange();
         }
@@ -193,8 +190,10 @@
           if (x > rect.width - EDGE_PX) return 'R';
           return 'M';
         }
+        let dragging = false, dragStartX = 0, dragBasePx = 0, dragMoved = 0;
         gallery.addEventListener('click', (e) => {
           if (mqMobile.matches) return;   // mobile uses native scroll, not click-nav
+          if (Math.abs(dragMoved) > 5) return;   // this was a drag, not a click
           const z = edgeZone(e);
           if (z === 'L') go(current - 1);
           else if (z === 'R') go(current + 1);
@@ -202,13 +201,38 @@
         });
         // Hover: arrow cursor only at the edges; default cursor in the middle
         gallery.addEventListener('mousemove', (e) => {
-          if (mqMobile.matches) return;
+          if (mqMobile.matches || dragging) return;
           const z = edgeZone(e);
           if (z !== cursorZone) {
             gallery.style.cursor = z === 'L' ? curL : z === 'R' ? curR : 'default';
             cursorZone = z;
           }
         });
+        // Drag/slide the boxes horizontally
+        gallery.addEventListener('pointerdown', (e) => {
+          if (mqMobile.matches || e.button !== 0) return;
+          dragging = true; dragStartX = e.clientX; dragMoved = 0;
+          dragBasePx = -current * gallery.clientWidth;
+          track.classList.add('dragging');
+          try { gallery.setPointerCapture(e.pointerId); } catch (_) {}
+        });
+        gallery.addEventListener('pointermove', (e) => {
+          if (!dragging) return;
+          dragMoved = e.clientX - dragStartX;
+          track.style.transform = `translateX(${dragBasePx + dragMoved}px)`;
+        });
+        function endDrag() {
+          if (!dragging) return;
+          dragging = false;
+          track.classList.remove('dragging');
+          cursorZone = null;   // re-apply the hover cursor on the next move
+          const threshold = gallery.clientWidth * 0.12;
+          if (dragMoved < -threshold) go(current + 1);
+          else if (dragMoved > threshold) go(current - 1);
+          else render();       // not far enough: snap back
+        }
+        gallery.addEventListener('pointerup', endDrag);
+        gallery.addEventListener('pointercancel', endDrag);
         build();
 
         return {

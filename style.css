@@ -179,22 +179,19 @@ a:hover { opacity: 0.5; }
 }
 
 .track {
-  position: relative;
+  display: flex;
   height: 100%;
+  will-change: transform;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
+.track.dragging { transition: none; }   /* follow the pointer 1:1 while dragging */
 
-/* Pairs are stacked and crossfade between each other */
 .slide {
-  position: absolute;
-  inset: 0;
+  flex: 0 0 100%;
+  height: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--gutter);
-  opacity: 0;
-  transition: opacity 0.9s ease;
-}
-.slide.active {
-  opacity: 1;
 }
 
 .panel {
@@ -305,14 +302,15 @@ a:hover { opacity: 0.5; }
     flex-direction: column;
     height: auto;
     gap: var(--gutter);
+    transform: none !important;   /* no horizontal slide on mobile */
+    transition: none;
   }
   .slide {
-    position: static;        /* back in flow for the continuous scroll */
+    flex: 0 0 auto;          /* not a full-width slide on mobile */
     display: flex;
     flex-direction: column;
     height: auto;
     gap: var(--gutter);
-    opacity: 1;              /* all pairs visible, no crossfade */
   }
   .panel {
     height: auto;
