@@ -99,9 +99,7 @@
             "images/Project%201/UTS/03.jpg",
             "images/Project%201/UTS/04.jpg",
             "images/Project%201/UTS/05.jpg",
-            "images/Project%201/UTS/06.jpg",
-            "images/Project%201/UTS/07.jpg",
-            "images/Project%201/UTS/08.jpg"
+            "images/Project%201/UTS/06.jpg"
           ]
         },
         {
@@ -184,10 +182,8 @@
         // Which edge zone is the pointer in? ('L' left edge, 'R' right edge, 'M' middle)
         function edgeZone(e) {
           const rect = gallery.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          if (x < EDGE_PX) return 'L';
-          if (x > rect.width - EDGE_PX) return 'R';
-          return 'M';
+          // whole left half → previous, whole right half → next
+          return (e.clientX - rect.left) < rect.width / 2 ? 'L' : 'R';
         }
         let dragging = false, dragStartX = 0, dragBasePx = 0, dragMoved = 0;
         gallery.addEventListener('click', (e) => {
