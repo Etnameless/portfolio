@@ -510,25 +510,19 @@
           "Selected work, 2019–2024."
         ]
       };
-      // Lock the document scroll while the panel is open (iOS-safe)
-      let savedScroll = 0;
+      // Lock scrolling while a panel is open WITHOUT moving the page (iOS-safe):
+      // block touch-scroll with a non-passive touchmove handler so the scroll
+      // position simply stays where it is — nothing to save or restore.
+      let touchBlocker = null;
       function lockScroll() {
-        if (!mqMobile.matches) return;   // desktop is wheel-driven, not body-scrolled
-        savedScroll = window.scrollY || window.pageYOffset || 0;
-        document.body.style.position = 'fixed';
-        document.body.style.top = (-savedScroll) + 'px';
-        document.body.style.left = '0';
-        document.body.style.right = '0';
-        document.body.style.width = '100%';
+        if (touchBlocker) return;   // already locked
+        touchBlocker = (e) => { e.preventDefault(); };
+        document.addEventListener('touchmove', touchBlocker, { passive: false });
       }
       function unlockScroll() {
-        if (document.body.style.position !== 'fixed') return;
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.left = '';
-        document.body.style.right = '';
-        document.body.style.width = '';
-        window.scrollTo(0, savedScroll);
+        if (!touchBlocker) return;
+        document.removeEventListener('touchmove', touchBlocker, { passive: false });
+        touchBlocker = null;
       }
       function openMenuOverlay(name, paragraphs) {
         const content = paragraphs || OVERLAY[name] || [];
