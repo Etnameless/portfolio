@@ -228,6 +228,7 @@ a:hover { opacity: 0.5; }
   display: flex;
   gap: 9px;
   align-items: flex-end;
+  justify-content: flex-end;   /* numbers sit on the right margin */
   transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);   /* fade-IN: slow, very gentle settle */
 }
 .pagination.fade {
