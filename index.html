@@ -156,7 +156,6 @@
         }
         function render() {
           track.style.transform = `translateX(${-current * 100}%)`;
-          updateCursorColors();
           if (onChange) onChange();
         }
         // Pick a black/white arrow per visible image so it stays legible
@@ -199,13 +198,42 @@
           else if (z === 'R') go(current + 1);
           // middle: do nothing
         });
+        // Arrow colour follows the actual pixel under the pointer (white over
+        // dark/letterbox, black over light) so it stays visible on any background
+        const _cv = document.createElement('canvas'); _cv.width = 1; _cv.height = 1;
+        const _ctx = _cv.getContext('2d', { willReadFrequently: true });
+        function colorUnderCursor(e, side) {
+          const slide = track.children[current];
+          if (!slide) return 'white';
+          const imgs = slide.querySelectorAll('img');
+          const img = side === 'L' ? imgs[0] : imgs[1];
+          if (!img || !img.complete || !img.naturalWidth) return 'white';
+          const pr = img.getBoundingClientRect();
+          const nw = img.naturalWidth, nh = img.naturalHeight;
+          const scale = Math.min(pr.width / nw, pr.height / nh);
+          const rw = nw * scale, rh = nh * scale;
+          const offX = (pr.width - rw) / 2, offY = (pr.height - rh) / 2;
+          const cx = e.clientX - pr.left, cy = e.clientY - pr.top;
+          if (cx < offX || cx > offX + rw || cy < offY || cy > offY + rh) return 'white';  // over the (black) letterbox
+          try {
+            _ctx.drawImage(img, (cx - offX) / scale, (cy - offY) / scale, 1, 1, 0, 0, 1, 1);
+            const d = _ctx.getImageData(0, 0, 1, 1).data;
+            return (0.299 * d[0] + 0.587 * d[1] + 0.114 * d[2]) < 128 ? 'white' : 'black';
+          } catch (_) { return 'white'; }
+        }
         // Hover: arrow cursor only at the edges; default cursor in the middle
         gallery.addEventListener('mousemove', (e) => {
           if (mqMobile.matches || dragging) return;
           const z = edgeZone(e);
-          if (z !== cursorZone) {
-            gallery.style.cursor = z === 'L' ? curL : z === 'R' ? curR : 'default';
-            cursorZone = z;
+          if (z === 'M') {
+            if (cursorZone !== 'M') { gallery.style.cursor = 'default'; cursorZone = 'M'; }
+            return;
+          }
+          const color = colorUnderCursor(e, z);
+          const key = z + color;
+          if (key !== cursorZone) {
+            gallery.style.cursor = arrowCursor(z === 'L' ? 'left' : 'right', color);
+            cursorZone = key;
           }
         });
         // Drag/slide the boxes horizontally (window listeners so the drag
