@@ -234,6 +234,15 @@
           firstImage = views[current][0];
           render();
         }
+        // Jump back to the first set instantly (no animation) — used when revisiting a project
+        function resetInstant() {
+          current = 0;
+          firstImage = 0;
+          track.style.transition = 'none';
+          track.style.transform = 'translateX(0%)';
+          void track.offsetHeight;   // reflow so the next navigation animates again
+          track.style.transition = '';
+        }
         // Click left half (the left image) → previous set; right half → next set
         const gallery = page.querySelector('.gallery');
         // Which edge zone is the pointer in? ('L' left edge, 'R' right edge, 'M' middle)
@@ -334,6 +343,7 @@
           get views() { return views; },
           get imageCount() { return count; },
           rebuild: build,
+          resetInstant,
           toggleOverlay: () => overlay.classList.toggle('visible')
         };
       }
@@ -402,6 +412,7 @@
         if (target === section || animating) return;
         section = target;
         animating = true;
+        galleries[section].resetInstant();   // each project reopens at its first set
 
         // text + numbers fade out immediately; swap content while hidden, then
         // fade back in ONLY after the image slide has fully completed
