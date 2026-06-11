@@ -207,8 +207,8 @@ a:hover { opacity: 0.5; }
   grid-row: 1;
   margin-top: auto;
   margin-bottom: auto;
-  /* line length capped to 2 columns */
-  max-width: calc((2 * var(--col)) + (1 * var(--gutter)));
+  /* line length capped to 4 columns (full sidebar width) */
+  max-width: calc((4 * var(--col)) + (3 * var(--gutter)));
   transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);   /* fade-IN: slow, very gentle settle */
 }
 .project-info.fade {
@@ -218,7 +218,7 @@ a:hover { opacity: 0.5; }
 /* Beyond 1300px the line length stops scaling — frozen at its 1300px value */
 @media (min-width: 1300px) {
   .project-info {
-    max-width: calc(2 * ((1300px - 2px - (2 * var(--margin)) - (19 * var(--gutter))) / 20) + var(--gutter));
+    max-width: calc(4 * ((1300px - 2px - (2 * var(--margin)) - (19 * var(--gutter))) / 20) + (3 * var(--gutter)));
   }
 }
 
