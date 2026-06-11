@@ -90,6 +90,23 @@ a:hover { opacity: 0.5; }
   transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+/* Blur veil over the content frames when a menu item is open (desktop only) */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 5;                       /* above the content, below the chrome */
+  background: rgba(245, 245, 245, 0.10);   /* slight grey/white hue */
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* ===== Fixed chrome: brand + menu + pagination persist across pages ===== */
 .chrome {
   position: absolute;
@@ -384,4 +401,5 @@ a:hover { opacity: 0.5; }
   .menu a:nth-child(3) { justify-self: end; }
   .pagination { display: none; }   /* no numbers on mobile */
   .grid-overlay { display: none; }
+  .backdrop { display: none; }   /* desktop-only feature */
 }

@@ -13,6 +13,9 @@
     <!-- Scrolling content: one .page per project, generated from PROJECTS by JS -->
     <div class="pages" id="pages"></div>
 
+    <!-- Blur veil shown when a menu item is open -->
+    <div class="backdrop" id="backdrop"></div>
+
     <!-- Fixed chrome: persists across pages; text + numbers fade on page change -->
     <div class="chrome">
       <header class="brand">Xavier T.S</header>
@@ -480,6 +483,20 @@
       document.querySelector('.chrome .brand').addEventListener('click', () => {
         if (mqMobile.matches) window.scrollTo({ top: 0, behavior: 'smooth' });
         else goSection(0);
+      });
+
+      // Desktop: clicking a menu item blurs the content frames behind a veil
+      const backdrop = document.getElementById('backdrop');
+      document.querySelectorAll('.chrome .menu a').forEach((a) => {
+        a.addEventListener('click', (e) => {
+          if (mqMobile.matches) return;   // desktop only
+          e.preventDefault();
+          backdrop.classList.add('open');
+        });
+      });
+      backdrop.addEventListener('click', () => backdrop.classList.remove('open'));
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') backdrop.classList.remove('open');
       });
 
       // Wheel / trackpad (desktop only; mobile scrolls natively):
