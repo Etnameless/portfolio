@@ -215,6 +215,9 @@ a:hover { opacity: 0.5; }
 /* The two images hug the centre gutter so every pair sits at the same gap */
 .slide > .panel:first-child img { object-position: right center; }
 .slide > .panel:last-child  img { object-position: left center; }
+/* A standalone single image fills the width and stays centred */
+.slide.single { grid-template-columns: 1fr; }
+.slide.single .panel img { object-position: center; }
 
 /* ===== Footer row ===== */
 .menu {

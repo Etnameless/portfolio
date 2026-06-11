@@ -109,14 +109,25 @@
             "Designed in partnership with Samson Ossendryver Studio.",
             "Images used in this concept are not owned or produced by Aura theraputics."
           ],
-          images: []   // placeholder boxes until real images are added
+          firstSingle: true,   // first slide is a single image, the rest are pairs
+          images: [
+            "images/Project%202/01.jpg",
+            "images/Project%202/02.png",
+            "images/Project%202/03.png",
+            "images/Project%202/4.png",
+            "images/Project%202/5.png",
+            "images/Project%202/6.png",
+            "images/Project%202/7.png"
+          ]
         }
       ];
 
       // Group image indices into views of `per` (e.g. pairs (0,1)(2,3)(4,5) or singles)
-      function buildViews(count, per) {
+      function buildViews(count, per, firstSingle) {
         const views = [];
-        for (let i = 0; i < count; i += per) {
+        let i = 0;
+        if (firstSingle && count > 0) { views.push([0]); i = 1; }   // standalone first image
+        for (; i < count; i += per) {
           const view = [];
           for (let k = 0; k < per && i + k < count; k++) view.push(i + k);
           views.push(view);
@@ -140,9 +151,9 @@
         overlay.innerHTML = Array.from({ length: 20 }, () => '<span></span>').join('');
 
         function build() {
-          views = buildViews(count, perView);
+          views = buildViews(count, perView, project.firstSingle);
           track.innerHTML = views.map(view =>
-            `<div class="slide">${view.map(i =>
+            `<div class="slide${view.length === 1 ? ' single' : ''}">${view.map(i =>
               images.length
                 ? `<figure class="panel"><img src="${images[i]}" alt="" loading="lazy"></figure>`
                 : `<figure class="panel"></figure>`
