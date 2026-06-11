@@ -338,7 +338,7 @@ a:hover { opacity: 0.5; }
 }
 
 /* ===== Responsive ===== */
-@media (max-width: 720px) {
+@media (max-width: 1000px) {
   /* ===== Mobile: one continuous native scroll through every image =====
      The document itself scrolls (not a nested container) so the iOS
      "tap status bar → scroll to top" gesture works. */
