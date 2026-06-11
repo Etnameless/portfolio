@@ -441,6 +441,9 @@ a:hover { opacity: 0.5; }
     cursor: pointer;
   }
   .info-body  { display: none; }   /* title only in the fixed header */
+  /* keep the project title visible (and tappable) while the panel is open */
+  .menu-overlay .chrome .project-info { opacity: 1; pointer-events: none; }
+  .menu-overlay .chrome .info-label { pointer-events: auto; }
 
   .menu {
     position: absolute;
