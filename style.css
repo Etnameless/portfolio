@@ -215,6 +215,12 @@ a:hover { opacity: 0.5; }
   opacity: 0;
   transition: opacity 0.45s ease;   /* fade-OUT: quicker */
 }
+/* Beyond 1300px the line length stops scaling — frozen at its 1300px value */
+@media (min-width: 1300px) {
+  .project-info {
+    max-width: calc(2 * ((1300px - 2px - (2 * var(--margin)) - (19 * var(--gutter))) / 20) + var(--gutter));
+  }
+}
 
 .info-label {
   margin-bottom: 16px;
