@@ -207,8 +207,8 @@ a:hover { opacity: 0.5; }
   grid-row: 1;
   margin-top: auto;
   margin-bottom: auto;
-  /* line length capped to 3 columns (one narrower than the 4-col sidebar) */
-  max-width: calc((3 * var(--col)) + (2 * var(--gutter)));
+  /* line length capped to 2 columns */
+  max-width: calc((2 * var(--col)) + (1 * var(--gutter)));
   transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);   /* fade-IN: slow, very gentle settle */
 }
 .project-info.fade {
