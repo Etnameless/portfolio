@@ -270,7 +270,7 @@ a:hover { opacity: 0.5; }
 }
 
 /* ===== Responsive ===== */
-@media (max-width: 720px) {
+@media (max-width: 1279px) {
   /* ===== Mobile: one continuous native scroll through every image =====
      The document itself scrolls (not a nested container) so the iOS
      "tap status bar → scroll to top" gesture works. */
@@ -292,7 +292,7 @@ a:hover { opacity: 0.5; }
     height: auto;
     padding: 0;
   }
-  .page + .page { margin-top: 48px; }   /* gap between projects */
+  .page + .page { margin-top: var(--gutter); }   /* same gap as between the boxes */
 
   /* Galleries become a simple vertical list of full-width images */
   .gallery {
