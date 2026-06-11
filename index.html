@@ -502,6 +502,13 @@
       const OVERLAY = {
         About: [
           "Xavier T.S is a visual communication designer based in Sydney, Australia, working across branding, editorial and digital design.",
+          "Experience",
+          "Freelance<br>2025 – present (Sydney, AU)",
+          "Australian Film Television and Radio School<br>Designer<br>2020 – 2024 (Sydney, AU)",
+          "Strategy Creative<br>Design Intern<br>2019 (Sydney, AU)",
+          "Sparks Interactive<br>Copywriter & Photographer<br>2019 (Auckland, NZ)",
+          "Education",
+          "Massey University<br>Bachelor of Design with Honours, Visual Communication (Wellington, NZ)",
           "Currently available for freelance projects and collaborations."
         ],
         Contact: [
@@ -535,7 +542,11 @@
             `<p class="overlay-project" data-i="${i}">${p.label}</p>`).join('');
         } else {
           const content = paragraphs || OVERLAY[name] || [];
-          overlayInner.innerHTML = content.map((t) => '<p>' + t + '</p>').join('');
+          overlayInner.innerHTML = content.map((t) =>
+            (t === 'Experience' || t === 'Education')
+              ? '<p class="overlay-heading">' + t + '</p>'
+              : '<p>' + t + '</p>'
+          ).join('');
         }
         overlayContent.classList.add('open');
         activeOverlay = name;

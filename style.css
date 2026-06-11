@@ -123,18 +123,24 @@ a:hover { opacity: 0.5; }
 .overlay-box {
   width: 255px;
   max-width: calc(100vw - 2 * var(--margin));
-  height: 35vh;
+  min-height: 35vh;                    /* at least this tall; grows to fit content */
   max-height: calc(100vh - 2 * var(--margin-y));
   background: rgba(42, 42, 42, 0.8);   /* dark grey, slightly transparent */
   border-radius: 8px;                  /* rounded corners */
   padding: var(--margin-y) var(--margin);   /* tight margins around the text */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;      /* text top, menu bottom */
   pointer-events: auto;                /* clicks inside the box do NOT close */
 }
-.overlay-inner { text-align: left; }
+.overlay-inner {
+  flex: 1 1 auto;                      /* fills the box; text sits at the top */
+  min-height: 0;
+  overflow-y: auto;                    /* scroll if content exceeds the box */
+  text-align: left;
+}
 .overlay-inner p + p { margin-top: 14px; }
+/* section labels inside the About panel */
+.overlay-inner p.overlay-heading { color: var(--muted); margin-top: 22px; }
 /* clickable project index (Projects panel) — tighter list spacing */
 .overlay-project { cursor: pointer; transition: color 0.2s ease; }
 .overlay-project:hover { color: var(--muted); }
@@ -142,6 +148,8 @@ a:hover { opacity: 0.5; }
 .overlay-menu {
   display: flex;
   justify-content: space-between;      /* About left, Contact centre, Projects right */
+  flex: 0 0 auto;
+  margin-top: 16px;                    /* gap above the menu row */
 }
 .overlay-menu a { color: var(--text); text-decoration: none; }
 .overlay-menu a.active { color: var(--muted); }
@@ -467,6 +475,6 @@ a:hover { opacity: 0.5; }
   /* Menu overlay works on mobile too; panel fills the column width */
   .overlay-box {
     width: calc(100vw - 2 * var(--margin));
-    height: 35vh;
+    min-height: 35vh;
   }
 }
