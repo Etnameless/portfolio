@@ -330,12 +330,25 @@
         setTimeout(() => { animating = false; }, TRANSITION_MS + FADE_MS);
       }
 
-      // Wheel → move one section (desktop only; mobile scrolls natively)
+      // Wheel / trackpad (desktop only; mobile scrolls natively):
+      // horizontal swipe → image sets on the current project, vertical → projects
+      let hSwiped = false, hSwipeTimer = null;
       window.addEventListener('wheel', (e) => {
         if (mqMobile.matches) return;
         e.preventDefault();
-        if (animating || Math.abs(e.deltaY) < 8) return;
-        goSection(section + (e.deltaY > 0 ? 1 : -1));
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+          if (Math.abs(e.deltaX) < 8) return;
+          clearTimeout(hSwipeTimer);
+          hSwipeTimer = setTimeout(() => { hSwiped = false; }, 180);  // one nav per gesture
+          if (!hSwiped) {
+            hSwiped = true;
+            if (e.deltaX > 0) galleries[section].next();
+            else galleries[section].prev();
+          }
+        } else {
+          if (animating || Math.abs(e.deltaY) < 8) return;
+          goSection(section + (e.deltaY > 0 ? 1 : -1));
+        }
       }, { passive: false });
 
       // Keys: ←/→ navigate images on the current page; ↑/↓ change page; G toggles grid
