@@ -113,8 +113,9 @@ a:hover { opacity: 0.5; }
   inset: 0;
   z-index: 6;                       /* above the veil, below the chrome */
   display: flex;
-  align-items: center;
+  align-items: flex-start;          /* top-anchored so the box grows downward only */
   justify-content: center;
+  padding-top: calc((100vh - 35vh) / 2);   /* min-size box still sits centred */
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;    /* regular fade */
@@ -123,8 +124,8 @@ a:hover { opacity: 0.5; }
 .overlay-box {
   width: 255px;
   max-width: calc(100vw - 2 * var(--margin));
-  min-height: 35vh;                    /* at least this tall; grows to fit content */
-  max-height: calc(100vh - 2 * var(--margin-y));
+  min-height: 35vh;                    /* at least this tall; grows downward to fit */
+  max-height: calc(100vh - ((100vh - 35vh) / 2) - var(--margin-y));   /* stop at viewport bottom */
   background: rgba(42, 42, 42, 0.8);   /* dark grey, slightly transparent */
   border-radius: 8px;                  /* rounded corners */
   padding: var(--margin-y) var(--margin);   /* tight margins around the text */
