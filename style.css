@@ -132,13 +132,17 @@ a:hover { opacity: 0.5; }
   display: flex;
   flex-direction: column;
   pointer-events: auto;                /* clicks inside the box do NOT close */
+  transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1);   /* smooth expand/contract */
 }
 .overlay-inner {
   flex: 1 1 auto;                      /* fills the box; text sits at the top */
   min-height: 0;
   overflow-y: auto;                    /* scroll if content exceeds the box */
   text-align: left;
+  transition: opacity 0.2s ease;       /* content fades on panel switch */
 }
+/* while the box is tweening height, hide overflow so no scrollbar flashes */
+.overlay-box.tweening .overlay-inner { overflow: hidden; }
 .overlay-inner p + p { margin-top: 16px; margin-top: 1lh; }   /* one blank line between sections */
 /* inline links inside a panel (e.g. the Contact email) */
 .overlay-link { color: inherit; text-decoration: none; transition: color 0.2s ease; }
@@ -163,7 +167,7 @@ a:hover { opacity: 0.5; }
   flex: 0 0 auto;
   margin-top: 16px;                    /* gap above the menu row */
 }
-.overlay-menu a { color: var(--text); text-decoration: none; }
+.overlay-menu a { color: var(--text); text-decoration: none; transition: color 0.25s ease; }
 .overlay-menu a.active { color: var(--muted); }
 /* Chrome menu is hidden while the panel (with its own menu) is open */
 .menu-overlay .chrome .menu { opacity: 0; pointer-events: none; }

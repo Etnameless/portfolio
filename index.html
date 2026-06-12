@@ -503,6 +503,7 @@
       const backdrop = document.getElementById('backdrop');
       const overlayContent = document.getElementById('overlay-content');
       const overlayInner = overlayContent.querySelector('.overlay-inner');
+      const overlayBox = overlayContent.querySelector('.overlay-box');
       const chromeLinks = Array.from(document.querySelectorAll('.chrome .menu a'));
       const overlayLinks = Array.from(document.querySelectorAll('.overlay-menu a'));
       let activeOverlay = null;
@@ -539,25 +540,64 @@
         document.removeEventListener('touchmove', touchBlocker, { passive: false });
         touchBlocker = null;
       }
-      function openMenuOverlay(name, paragraphs) {
-        viewport.classList.add('menu-overlay');
-        backdrop.classList.add('open');
+      function buildOverlayHTML(name, paragraphs) {
         if (name === 'Projects' && !paragraphs) {
           // clickable index of every project, top → bottom
-          overlayInner.innerHTML = PROJECTS.map((p, i) =>
-            `<p class="overlay-project" data-i="${i}">${p.label}</p>`).join('');
-        } else {
-          const content = paragraphs || OVERLAY[name] || [];
-          overlayInner.innerHTML = content.map((t) =>
-            (t === 'Experience' || t === 'Education')
-              ? '<p class="overlay-heading">' + t + '</p>'
-              : '<p>' + t + '</p>'
-          ).join('');
+          return PROJECTS.map((p, i) => `<p class="overlay-project" data-i="${i}">${p.label}</p>`).join('');
         }
-        overlayContent.classList.add('open');
-        activeOverlay = name;
+        const content = paragraphs || OVERLAY[name] || [];
+        return content.map((t) =>
+          (t === 'Experience' || t === 'Education')
+            ? '<p class="overlay-heading">' + t + '</p>'
+            : '<p>' + t + '</p>'
+        ).join('');
+      }
+      function setActiveLink(name) {
         overlayLinks.forEach((a) => a.classList.toggle('active', a.textContent.trim() === name));
+      }
+      let panelTimers = [];
+      const clearPanelTimers = () => { panelTimers.forEach(clearTimeout); panelTimers = []; };
+      function openMenuOverlay(name, paragraphs) {
+        const html = buildOverlayHTML(name, paragraphs);
+        if (backdrop.classList.contains('open')) {   // already open → smooth crossfade
+          crossfadePanel(html, name);
+          return;
+        }
+        // first open: reset any transient styles, then fade the whole panel in
+        clearPanelTimers();
+        overlayBox.classList.remove('tweening');
+        overlayBox.style.height = '';
+        overlayInner.style.opacity = '';
+        overlayInner.innerHTML = html;
+        setActiveLink(name);
+        activeOverlay = name;
+        viewport.classList.add('menu-overlay');
+        backdrop.classList.add('open');
+        overlayContent.classList.add('open');
         lockScroll();
+      }
+      // Switch panels: fade content out, swap, tween the box height, fade in
+      function crossfadePanel(html, name) {
+        clearPanelTimers();
+        const startH = overlayBox.getBoundingClientRect().height;
+        overlayBox.classList.add('tweening');
+        overlayBox.style.height = startH + 'px';   // pin current height
+        overlayInner.style.opacity = '0';          // fade current content out
+        activeOverlay = name;
+        panelTimers.push(setTimeout(() => {
+          overlayInner.innerHTML = html;           // swap while invisible
+          setActiveLink(name);
+          overlayBox.style.height = 'auto';        // measure new natural height
+          const endH = overlayBox.getBoundingClientRect().height;
+          overlayBox.style.height = startH + 'px';
+          void overlayBox.offsetHeight;            // commit baseline, then tween
+          overlayBox.style.height = endH + 'px';
+          overlayInner.style.opacity = '1';        // fade new content in
+          panelTimers.push(setTimeout(() => {
+            overlayBox.style.height = '';
+            overlayBox.classList.remove('tweening');
+          }, 420));
+        }, 200));
       }
       // Jump to where a project begins, then close the panel
       function goToProject(i) {
@@ -581,6 +621,7 @@
         if (item) goToProject(Number(item.dataset.i));
       });
       function closeMenuOverlay() {
+        clearPanelTimers();
         viewport.classList.remove('menu-overlay');
         backdrop.classList.remove('open');
         overlayContent.classList.remove('open');
