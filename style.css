@@ -154,7 +154,7 @@ a:hover { opacity: 0.5; }
 /* clickable project index (Projects panel) — tighter list spacing */
 .overlay-project { cursor: pointer; transition: color 0.2s ease; }
 .overlay-project:hover { color: var(--muted); }
-.overlay-inner .overlay-project + .overlay-project { margin-top: 6px; }
+.overlay-inner .overlay-project + .overlay-project { margin-top: 0; }
 .overlay-menu {
   display: flex;
   justify-content: space-between;      /* About left, Contact centre, Projects right */
