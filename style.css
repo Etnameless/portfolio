@@ -488,4 +488,6 @@ a:hover { opacity: 0.5; }
     width: calc(100vw - 2 * var(--margin));
     min-height: 35vh;
   }
+  /* sit the panel a quarter higher on mobile */
+  .overlay-content { padding-top: calc((100vh - 35vh) / 2 * 0.75); }
 }
