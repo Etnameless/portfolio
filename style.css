@@ -151,6 +151,8 @@ a:hover { opacity: 0.5; }
 }
 /* section labels inside the About panel */
 .overlay-inner p.overlay-heading { color: var(--muted); margin-top: 22px; }
+/* the first entry sits directly under its heading (no gap) */
+.overlay-inner p.overlay-heading + p { margin-top: 0; }
 /* clickable project index (Projects panel) — tighter list spacing */
 .overlay-project { cursor: pointer; transition: color 0.2s ease; }
 .overlay-project:hover { color: var(--muted); }
