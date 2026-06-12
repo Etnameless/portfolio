@@ -677,11 +677,17 @@
         pageEls.forEach(p => scrollSpy.observe(p));
       }
       mqMobile.addEventListener('change', () => {
-        section = 0;
-        window.scrollTo(0, 0);
-        if (!mqMobile.matches) pagesWrap.style.transform = 'translateY(0vh)';
-        renderProjectInfo();
-        setupScrollSpy();
+        const keep = section;   // stay on the same project across the breakpoint
+        if (mqMobile.matches) {
+          // desktop → mobile: native-scroll to the project we were viewing
+          requestAnimationFrame(() => { goToProject(keep); setupScrollSpy(); });
+        } else {
+          // mobile → desktop: page straight to the project that was in view
+          setupScrollSpy();   // disconnects the mobile observer
+          pagesWrap.style.transform = `translateY(${-keep * 100}vh)`;
+          window.scrollTo(0, 0);
+          renderProjectInfo();
+        }
       });
       setupScrollSpy();
     })();
