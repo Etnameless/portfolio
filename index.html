@@ -424,10 +424,13 @@
         if (activeOverlay === p.label) { closeMenuOverlay(); return; }   // toggle
         openMenuOverlay(p.label, p.body);
       });
+      // Typesetting: bind the last two words so a single word can never be
+      // stranded on its own line (no orphans/widows in the left text).
+      function noWidows(s) { return s.replace(/\s+(\S+)\s*$/, ' $1'); }
       function renderProjectInfo() {
         const p = PROJECTS[section];
         infoLabel.textContent = p.label;
-        infoBody.innerHTML = p.body.map(x => `<p>${x}</p>`).join('');
+        infoBody.innerHTML = p.body.map(x => `<p>${noWidows(x)}</p>`).join('');
         viewport.classList.remove('expanded');   // reset to collapsed on page change
       }
 

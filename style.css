@@ -231,6 +231,7 @@ a:hover { opacity: 0.5; }
   margin-bottom: auto;
   /* line length capped to 4 columns (full sidebar width) */
   max-width: calc((4 * var(--col)) + (3 * var(--gutter)));
+  text-wrap: pretty;   /* avoid orphans/widows in the left text */
   transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);   /* fade-IN: slow, very gentle settle */
 }
 .project-info.fade {
