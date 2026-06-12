@@ -133,11 +133,13 @@
           body: [
             "Identity design and strategy for a Sydney based talent management agency primarily focusing on developing impactful sports and emerging cultural talent."
           ],
-          firstSingle: true,
+          allSingle: true,   // each image displays on its own
           images: [
             "images/Project%204_DEN/01.webp",
             "images/Project%204_DEN/02.webp",
-            "images/Project%204_DEN/03.webp"
+            "images/Project%204_DEN/03.webp",
+            "images/Project%204_DEN/04.webp",
+            "images/Project%204_DEN/05.webp"
           ]
         },
         {
@@ -245,7 +247,8 @@
         overlay.innerHTML = Array.from({ length: 20 }, () => '<span></span>').join('');
 
         function build() {
-          const leadSingles = project.leadSingles != null ? project.leadSingles : (project.firstSingle ? 1 : 0);
+          const leadSingles = project.allSingle ? count
+            : (project.leadSingles != null ? project.leadSingles : (project.firstSingle ? 1 : 0));
           views = buildViews(count, perView, leadSingles);
           track.innerHTML = views.map(view =>
             `<div class="slide${view.length === 1 ? ' single' : ''}">${view.map(i =>
