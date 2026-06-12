@@ -139,7 +139,7 @@ a:hover { opacity: 0.5; }
   overflow-y: auto;                    /* scroll if content exceeds the box */
   text-align: left;
 }
-.overlay-inner p + p { margin-top: 14px; }
+.overlay-inner p + p { margin-top: 16px; margin-top: 1lh; }   /* one blank line between sections */
 /* inline links inside a panel (e.g. the Contact email) */
 .overlay-link { color: inherit; text-decoration: none; transition: color 0.2s ease; }
 .overlay-link:hover { color: var(--muted); }
@@ -150,7 +150,7 @@ a:hover { opacity: 0.5; }
   vertical-align: -0.02em;   /* sit on the text baseline */
 }
 /* section labels inside the About panel */
-.overlay-inner p.overlay-heading { color: var(--muted); margin-top: 22px; }
+.overlay-inner p.overlay-heading { color: var(--muted); margin-top: 16px; margin-top: 1lh; }
 /* the first entry sits directly under its heading (no gap) */
 .overlay-inner p.overlay-heading + p { margin-top: 0; }
 /* clickable project index (Projects panel) — tighter list spacing */
