@@ -543,13 +543,13 @@
       function buildOverlayHTML(name, paragraphs) {
         if (name === 'Projects' && !paragraphs) {
           // clickable index of every project, top → bottom
-          return PROJECTS.map((p, i) => `<p class="overlay-project" data-i="${i}">${p.label}</p>`).join('');
+          return PROJECTS.map((p, i) => `<p class="overlay-project" data-i="${i}">${noWidows(p.label)}</p>`).join('');
         }
         const content = paragraphs || OVERLAY[name] || [];
         return content.map((t) =>
           (t === 'Experience' || t === 'Education')
             ? '<p class="overlay-heading">' + t + '</p>'
-            : '<p>' + t + '</p>'
+            : '<p>' + noWidows(t) + '</p>'
         ).join('');
       }
       function setActiveLink(name) {

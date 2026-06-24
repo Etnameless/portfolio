@@ -139,6 +139,7 @@ a:hover { opacity: 0.5; }
   min-height: 0;
   overflow-y: auto;                    /* scroll if content exceeds the box */
   text-align: left;
+  text-wrap: pretty;                   /* TEST: avoid orphans/widows in panel text */
   transition: opacity 0.2s ease;       /* content fades on panel switch */
 }
 /* while the box is tweening height, hide overflow so no scrollbar flashes */
