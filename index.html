@@ -89,14 +89,15 @@
             "Identity design for University of Technology Sydney's 2023 honours graduation exhibitions.",
             "Designed in partnership with Samson Ossendryver Studio."
           ],
-          leadSingles: 1,   // 01 alone, then 02/03, 04/05, 06 alone (odd remainder)
+          leadSingles: 1,   // 01 alone, then 02/03, 04/05, 06/07
           images: [
             "images/Project%201_UTS/UTS/01.webp",
-            "images/Project%201_UTS/UTS/02.webp",
+            "images/Project%201_UTS/UTS/02.mp4",
             "images/Project%201_UTS/UTS/03.webp",
             "images/Project%201_UTS/UTS/04.webp",
             "images/Project%201_UTS/UTS/05.webp",
-            "images/Project%201_UTS/UTS/06.webp"
+            "images/Project%201_UTS/UTS/06.webp",
+            "images/Project%201_UTS/UTS/07.webp"
           ]
         },
         {
@@ -251,10 +252,13 @@
           const leadSingles = project.allSingle ? count
             : (project.leadSingles != null ? project.leadSingles : (project.firstSingle ? 1 : 0));
           views = buildViews(count, perView, leadSingles);
+          const media = (src) => /\.(mp4|webm|mov)$/i.test(src)
+            ? `<video src="${src}" muted loop playsinline autoplay preload="metadata"></video>`
+            : `<img src="${src}" alt="" loading="lazy">`;
           track.innerHTML = views.map(view =>
             `<div class="slide${view.length === 1 ? ' single' : ''}">${view.map(i =>
               images.length
-                ? `<figure class="panel"><img src="${images[i]}" alt="" loading="lazy"></figure>`
+                ? `<figure class="panel">${media(images[i])}</figure>`
                 : `<figure class="panel"></figure>`
             ).join('')}</div>`
           ).join('');
